@@ -34,7 +34,7 @@ class CovidData(object):
         self.loaded = False
         self.map = folium.Map(location=[0,0],
               tiles = 'Stamen Terrain',
-              zoom_start=3)
+              zoom_start=2)
         
     def populate(self):
         if not self.loaded:
@@ -90,7 +90,7 @@ covid_data.plot_number_of_cases_for_all_dataframes(my_date)
 app = Flask(__name__)
 @app.route("/")
 def display_map():
-     return covid_data.map.render()
+     return covid_data.map._repr_html_()
 
 
 
