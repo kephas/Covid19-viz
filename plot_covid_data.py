@@ -16,6 +16,9 @@ from rasterio.warp import calculate_default_transform, reproject, Resampling
 import earthpy as et
 import pdb 
 import flask
+from flask import Flask
+
+
 
 ############# LOAD DATAFRAMES
 
@@ -76,14 +79,19 @@ class CovidData(object):
           self.plot_number_of_cases(self.confirmed_cases_aggregated,date,'blue')
           self.plot_number_of_cases(self.deaths_aggregated,date,'red')
           self.plot_number_of_cases(self.recoveries_aggregated,date,'green')
-          
+   
 
-if __name__=='__main__':
-     my_date='3/14/20'
-     covid_data=CovidData()
-     covid_data.populate()
-     covid_data.group_by_regions_for_all_dataframes(my_date)
-     covid_data.plot_number_of_cases_for_all_dataframes(my_date)
-     covid_data.map.save("./mymap.html")
+my_date='3/14/20'
+covid_data=CovidData()
+covid_data.populate()
+covid_data.group_by_regions_for_all_dataframes(my_date)
+covid_data.plot_number_of_cases_for_all_dataframes(my_date)
+       
+app = Flask(__name__)
+@app.route("/")
+def display_map():
+     return covid_data.map.render()
+
+
 
 
