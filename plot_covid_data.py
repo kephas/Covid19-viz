@@ -19,44 +19,43 @@ from flask import Flask
 
 
 
-############# LOAD DATAFRAMES
+
+class CovidDF:
+    def __init__(self, url):
+        self.url = url
+        self.raw = None
+        self.aggregated = None
+
+    def reload(self, date):
+        self.raw = pd.read_csv(self.url)
+        self.group_by_regions(date)
+
+    def group_by_regions(self,df,date):
+          df=self.raw[['Province/State','Country/Region','Lat','Long',date]]
+          self.aggregated=df.groupby(['Country/Region']).agg({'Lat':'mean',
+                              'Long':'mean',
+                              date: 'sum'})
+          self.aggregated.set_value('France','Lat',46.2276)
+          self.aggregated.set_value('France','Long',2.2137)
+
 
 class CovidData(object):
 
     def __init__(self):
-        self.confirmed_cases_raw = None
-        self.deaths_raw = None
-        self.recoveries_raw = None
-        self.confirmed_cases_aggregated = None
-        self.deaths_aggregated = None
-        self.recoveries_aggregated = None
+        self.confirmed_cases = CovidDF('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv')
+        self.deaths = CovidDF('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv')
+        self.recoveries = CovidDF('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv')
         self.loaded = False
         self.map = folium.Map(location=[0,0],
               tiles = 'Stamen Terrain',
               zoom_start=2)
         
-    def populate(self):
+    def populate(sel, date):
         if not self.loaded:
-             self.confirmed_cases_raw=pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv')
-             self.deaths_raw=pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv')
-             self.recoveries_raw=pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv')
+             self.confirmed_cases.reload(date)
+             self.deaths.reload(date)
+             self.recoveries.reload(date)
              self.loaded=True
-
-        
-     
-    def group_by_regions(self,df,date):
-          df=df[['Province/State','Country/Region','Lat','Long',date]]
-          df_aggregated=df.groupby(['Country/Region']).agg({'Lat':'mean', 
-                              'Long':'mean', 
-                              date: 'sum'})
-          df_aggregated.set_value('France','Lat',46.2276)
-          df_aggregated.set_value('France','Long',2.2137)
-          return df_aggregated
-
-    def group_by_regions_for_all_dataframes(self,date):
-          self.confirmed_cases_aggregated=self.group_by_regions(self.confirmed_cases_raw,date)
-          self.deaths_aggregated=self.group_by_regions(self.deaths_raw,date)
-          self.recoveries_aggregated=self.group_by_regions(self.recoveries_raw,date)
 
     def plot_number_of_cases(self,df,date,custom_color):
           dc=df.iloc[df[date].nonzero()]
@@ -75,17 +74,19 @@ class CovidData(object):
               ).add_to(self.map)
 
     def plot_number_of_cases_for_all_dataframes(self,date):
-          self.plot_number_of_cases(self.confirmed_cases_aggregated,date,'blue')
-          self.plot_number_of_cases(self.deaths_aggregated,date,'red')
-          self.plot_number_of_cases(self.recoveries_aggregated,date,'green')
-   
+          self.plot_number_of_cases(self.confirmed_cases.aggregated,date,'blue')
+          self.plot_number_of_cases(self.deaths.aggregated,date,'red')
+          self.plot_number_of_cases(self.recoveries.aggregated,date,'green')
+          
+
+
 
 my_date='3/14/20'
 covid_data=CovidData()
 covid_data.populate()
 covid_data.group_by_regions_for_all_dataframes(my_date)
 covid_data.plot_number_of_cases_for_all_dataframes(my_date)
-       
+
 app = Flask(__name__)
 @app.route("/")
 def display_map():
