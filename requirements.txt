@@ -3,3 +3,4 @@ pandas
 folium
 rasterio
 earthpy
+Rtree==0.9.0
