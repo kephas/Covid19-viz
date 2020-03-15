@@ -1,6 +1,6 @@
 flask 
 pandas
-folium
+folium==0.6.0
 rasterio
 earthpy
-Rtree==0.6.0
+
