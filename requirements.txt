@@ -1,3 +1,5 @@
 flask 
 pandas
 folium
+rasterio
+earthpy
