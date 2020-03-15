@@ -8,7 +8,6 @@ Created on Sun Mar 15 17:01:50 2020
 
 import os 
 import pandas as pd
-import path
 import folium
 from folium import plugins
 import rasterio as rio
