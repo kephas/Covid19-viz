@@ -35,8 +35,8 @@ class CovidDF:
           self.aggregated=df.groupby(['Country/Region']).agg({'Lat':'mean',
                               'Long':'mean',
                               date: 'sum'})
-#          self.aggregated.set_value('France','Lat',46.2276)
-#          self.aggregated.set_value('France','Long',2.2137)
+          self.aggregated.at['France','Lat']=46.2276
+          self.aggregated.at['France','Long']=2.2137
 
 
 class CovidData(object):
@@ -58,7 +58,7 @@ class CovidData(object):
              self.loaded=True
 
     def plot_number_of_cases(self,df,date,custom_color):
-          dc=df.iloc[df[date].nonzero()]
+          dc=df.iloc[df[date].to_numpy().nonzero()]
           latitude = dc.Lat.values.astype('float')
           longitude = dc.Long.values.astype('float')
           radius = dc[date].values.astype('float')
@@ -88,10 +88,9 @@ covid_data.populate(my_date)
 covid_data.plot_number_of_cases_for_all_dataframes(my_date)
 
 
-#covid_data.map.save("./test.html")
+#covid_data.map.save("./mytest.html")
 app = Flask(__name__)
 @app.route("/")
-#app.listen(process.env.PORT || 3000, function(){console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);});
 def display_map():
      return covid_data.map._repr_html_()
 
