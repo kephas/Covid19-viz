@@ -3,5 +3,4 @@ pandas
 folium==0.6.0
 rasterio
 earthpy
-rtree>=0.8,<0.9
-
+gunicorn

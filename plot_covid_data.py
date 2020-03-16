@@ -35,8 +35,8 @@ class CovidDF:
           self.aggregated=df.groupby(['Country/Region']).agg({'Lat':'mean',
                               'Long':'mean',
                               date: 'sum'})
-          self.aggregated.set_value('France','Lat',46.2276)
-          self.aggregated.set_value('France','Long',2.2137)
+          self.aggregated.at['France','Lat']=46.2276
+          self.aggregated.at['France','Long']=2.2137
 
 
 class CovidData(object):
@@ -58,7 +58,7 @@ class CovidData(object):
              self.loaded=True
 
     def plot_number_of_cases(self,df,date,custom_color):
-          dc=df.iloc[df[date].nonzero()]
+          dc=df.iloc[df[date].to_numpy().nonzero()]
           latitude = dc.Lat.values.astype('float')
           longitude = dc.Long.values.astype('float')
           radius = dc[date].values.astype('float')
@@ -69,8 +69,8 @@ class CovidData(object):
                   radius=ra*10,
                   fill=True,
                   color=custom_color,
-                  fillColor=custom_color,
-                  fillOpacity=0.5
+                  fill_color=custom_color,
+                  fill_opacity=0.5
               ).add_to(self.map)
 
     def plot_number_of_cases_for_all_dataframes(self,date):
@@ -84,14 +84,13 @@ class CovidData(object):
 my_date='3/14/20'
 covid_data=CovidData()
 covid_data.populate(my_date)
-#covid_data.group_by_regions_for_all_dataframes(my_date)
 covid_data.plot_number_of_cases_for_all_dataframes(my_date)
+#covid_data.map.save("./mytest.html")
 
 app = Flask(__name__)
 @app.route("/")
 def display_map():
      return covid_data.map._repr_html_()
 
-
-
-
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
