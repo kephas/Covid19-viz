@@ -69,8 +69,8 @@ class CovidData(object):
                   radius=ra*10,
                   fill=True,
                   color=custom_color,
-                  fillColor=custom_color,
-                  fillOpacity=0.5
+                  fill_color=custom_color,
+                  fill_opacity=0.5
               ).add_to(self.map)
 
     def plot_number_of_cases_for_all_dataframes(self,date):
