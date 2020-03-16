@@ -83,7 +83,7 @@ class CovidData(object):
 
 my_date='3/14/20'
 covid_data=CovidData()
-covid_data.populate()
+covid_data.populate(my_date)
 covid_data.group_by_regions_for_all_dataframes(my_date)
 covid_data.plot_number_of_cases_for_all_dataframes(my_date)
 
