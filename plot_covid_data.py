@@ -38,10 +38,10 @@ class CovidDF:
                               date: 'sum'})
           self.aggregated.at['France','Lat']=46.2276
           self.aggregated.at['France','Long']=2.2137
-          self.aggregated.at['United Kingdom','Lat']=49.3723
-          self.aggregated.at['United Kingdom','Long']=-2.3644
-          self.aggregated.at['Denmark','Lat']=55.3781
-          self.aggregated.at['Denmark','Long']=-3.4360          
+          self.aggregated.at['United Kingdom','Lat']=53.5
+          self.aggregated.at['United Kingdom','Long']=-2.5
+          self.aggregated.at['Denmark','Lat']=56
+          self.aggregated.at['Denmark','Long']=9.2          
 
 
 
@@ -68,8 +68,9 @@ class CovidData(object):
           latitude = dc.Lat.values.astype('float')
           longitude = dc.Long.values.astype('float')
           radius = dc[date].values.astype('float')
+          number_of_cases = dc[date].values.astype(str)
      
-          for la,lo,ra in zip(latitude,longitude,radius):
+          for la,lo,ra,nc in zip(latitude,longitude,radius,number_of_cases):
               folium.Circle(
                   location=[la,lo],
                   radius=ra*10,
@@ -77,7 +78,7 @@ class CovidData(object):
                   color=custom_color,
                   fill_color=custom_color,
                   fill_opacity=0.5
-              ).add_to(self.map)
+              ).add_child(folium.Popup(nc+' number of cases')).add_to(self.map)
 
     def plot_number_of_cases_for_all_dataframes(self,date):
           self.plot_number_of_cases(self.confirmed_cases.aggregated,date,'blue')
@@ -112,12 +113,12 @@ legend_html =   '''
 covid_data.map.get_root().html.add_child(folium.Element(legend_html))
 
 
-#covid_data.map.save("./mytest.html")
+covid_data.map.save("./mytest.html")
 
-app = Flask(__name__)
-@app.route("/")
-def display_map():
-     return covid_data.map._repr_html_()
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
+#app = Flask(__name__)
+#@app.route("/")
+#def display_map():
+#     return covid_data.map._repr_html_()
+#
+#if __name__ == "__main__":
+#    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
