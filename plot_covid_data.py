@@ -91,6 +91,8 @@ covid_data.plot_number_of_cases_for_all_dataframes(my_date)
 #covid_data.map.save("./mytest.html")
 app = Flask(__name__)
 @app.route("/")
+port = int(os.environ.get("PORT", 5000))
+app.run(debug=True, host='0.0.0.0', port=port)
 def display_map():
      return covid_data.map._repr_html_()
 
