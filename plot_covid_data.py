@@ -113,12 +113,12 @@ legend_html =   '''
 covid_data.map.get_root().html.add_child(folium.Element(legend_html))
 
 
-covid_data.map.save("./mytest.html")
+#covid_data.map.save("./mytest.html")
 
-#app = Flask(__name__)
-#@app.route("/")
-#def display_map():
-#     return covid_data.map._repr_html_()
-#
-#if __name__ == "__main__":
-#    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
+app = Flask(__name__)
+@app.route("/")
+def display_map():
+     return covid_data.map._repr_html_()
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
