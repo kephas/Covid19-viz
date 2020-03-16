@@ -38,6 +38,11 @@ class CovidDF:
                               date: 'sum'})
           self.aggregated.at['France','Lat']=46.2276
           self.aggregated.at['France','Long']=2.2137
+          self.aggregated.at['United Kingdom','Lat']=49.3723
+          self.aggregated.at['United Kingdom','Long']=-2.3644
+          self.aggregated.at['Denmark','Lat']=56.2639
+          self.aggregated.at['Denmark','Long']=9.5018          
+
 
 
 class CovidData(object):
@@ -47,7 +52,7 @@ class CovidData(object):
         self.deaths = CovidDF('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv')
         self.recoveries = CovidDF('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv')
         self.loaded = False
-        self.map = folium.Map(location=[0,0],
+        self.map = folium.Map(location=[10,20],
               tiles = 'Stamen Terrain',
               zoom_start=3)
         
@@ -107,12 +112,12 @@ legend_html =   '''
 covid_data.map.get_root().html.add_child(folium.Element(legend_html))
 
 
-#covid_data.map.save("./mytest2.html")
-
-app = Flask(__name__)
-@app.route("/")
-def display_map():
-     return covid_data.map._repr_html_()
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
+covid_data.map.save("./mytest.html")
+#
+#app = Flask(__name__)
+#@app.route("/")
+#def display_map():
+#     return covid_data.map._repr_html_()
+#
+#if __name__ == "__main__":
+#    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
