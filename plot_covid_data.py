@@ -29,7 +29,6 @@ class CovidDF:
 
     def reload(self, date):
         self.raw = pd.read_csv(self.url)
-        pdb.set_trace()
         self.group_by_regions(date)
 
     def group_by_regions(self,date):
