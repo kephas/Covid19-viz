@@ -10,6 +10,7 @@ import os
 import pandas as pd
 import folium
 from folium import plugins
+from folium import IFrame
 import rasterio as rio
 from rasterio.warp import calculate_default_transform, reproject, Resampling
 import earthpy as et
@@ -48,7 +49,7 @@ class CovidData(object):
         self.loaded = False
         self.map = folium.Map(location=[0,0],
               tiles = 'Stamen Terrain',
-              zoom_start=2)
+              zoom_start=3)
         
     def populate(self, date):
         if not self.loaded:
@@ -81,11 +82,32 @@ class CovidData(object):
 
 
 
-my_date='3/14/20'
+my_date=pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv').columns[-1]
 covid_data=CovidData()
 covid_data.populate(my_date)
 covid_data.plot_number_of_cases_for_all_dataframes(my_date)
-#covid_data.map.save("./mytest.html")
+
+#iframe = folium.IFrame(str(my_date), width=700, height=450)
+#popup = folium.Popup(str(my_date), max_width=3000)
+#Text = folium.Marker(location=[70,0], popup=popup,
+#                     icon=folium.Icon(icon_color='green'))
+#covid_data.map.add_child(Text)
+
+legend_html =   '''
+                <div style="position: fixed; 
+                            bottom: 50px; left: 50px; width: 300px; height: 100px; 
+                            border:2px solid grey; z-index:9999; font-size:14px;
+                            ">&nbsp; Occurences of covid-19 cases by country <br>
+                              &nbsp; Confirmed cases &nbsp; <i class="fa fa-circle" style="color:blue"></i><br>
+                              &nbsp; Deaths &nbsp; <i class="fa fa-circle" style="color:red"></i><br>
+                              &nbsp; Recoveries &nbsp; <i class="fa fa-circle" style="color:green"></i>
+                </div>
+                '''
+                
+covid_data.map.get_root().html.add_child(folium.Element(legend_html))
+
+
+#covid_data.map.save("./mytest2.html")
 
 app = Flask(__name__)
 @app.route("/")
