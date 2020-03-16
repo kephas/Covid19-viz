@@ -30,7 +30,7 @@ class CovidDF:
         self.raw = pd.read_csv(self.url)
         self.group_by_regions(date)
 
-    def group_by_regions(self,df,date):
+    def group_by_regions(self,date):
           df=self.raw[['Province/State','Country/Region','Lat','Long',date]]
           self.aggregated=df.groupby(['Country/Region']).agg({'Lat':'mean',
                               'Long':'mean',
@@ -50,7 +50,7 @@ class CovidData(object):
               tiles = 'Stamen Terrain',
               zoom_start=2)
         
-    def populate(sel, date):
+    def populate(self, date):
         if not self.loaded:
              self.confirmed_cases.reload(date)
              self.deaths.reload(date)
@@ -84,7 +84,7 @@ class CovidData(object):
 my_date='3/14/20'
 covid_data=CovidData()
 covid_data.populate(my_date)
-covid_data.group_by_regions_for_all_dataframes(my_date)
+#covid_data.group_by_regions_for_all_dataframes(my_date)
 covid_data.plot_number_of_cases_for_all_dataframes(my_date)
 
 app = Flask(__name__)
