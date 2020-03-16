@@ -29,6 +29,7 @@ class CovidDF:
 
     def reload(self, date):
         self.raw = pd.read_csv(self.url)
+        pdb.set_trace()
         self.group_by_regions(date)
 
     def group_by_regions(self,date):
@@ -40,8 +41,8 @@ class CovidDF:
           self.aggregated.at['France','Long']=2.2137
           self.aggregated.at['United Kingdom','Lat']=49.3723
           self.aggregated.at['United Kingdom','Long']=-2.3644
-          self.aggregated.at['Denmark','Lat']=56.2639
-          self.aggregated.at['Denmark','Long']=9.5018          
+          self.aggregated.at['Denmark','Lat']=55.3781
+          self.aggregated.at['Denmark','Long']=-3.4360          
 
 
 
@@ -112,12 +113,12 @@ legend_html =   '''
 covid_data.map.get_root().html.add_child(folium.Element(legend_html))
 
 
-covid_data.map.save("./mytest.html")
-#
-#app = Flask(__name__)
-#@app.route("/")
-#def display_map():
-#     return covid_data.map._repr_html_()
-#
-#if __name__ == "__main__":
-#    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
+#covid_data.map.save("./mytest.html")
+
+app = Flask(__name__)
+@app.route("/")
+def display_map():
+     return covid_data.map._repr_html_()
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
