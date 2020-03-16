@@ -1,0 +1,19 @@
+{
+  "name": "Covid19-viz",
+  "description": "Covid",
+  "keywords": [
+    "Covid-19",
+    "virus",
+    "map"
+  ],
+  "website": "https://github.com/Ovide19/Covid19-viz",
+  "env": {
+  },
+  "addons": [
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-python"
+    }
+  ]
+}

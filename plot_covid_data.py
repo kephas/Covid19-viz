@@ -92,8 +92,5 @@ app = Flask(__name__)
 def display_map():
      return covid_data.map._repr_html_()
 
-app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
-
-
-
-
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
