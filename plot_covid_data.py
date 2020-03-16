@@ -63,7 +63,7 @@ class CovidData(object):
              self.recoveries.reload(date)
              self.loaded=True
 
-    def plot_number_of_cases(self,df,date,custom_color):
+    def plot_number_of_cases(self,df,date,custom_color,label):
           dc=df.iloc[df[date].to_numpy().nonzero()]
           latitude = dc.Lat.values.astype('float')
           longitude = dc.Long.values.astype('float')
@@ -78,12 +78,12 @@ class CovidData(object):
                   color=custom_color,
                   fill_color=custom_color,
                   fill_opacity=0.5
-              ).add_child(folium.Popup(nc+' number of cases')).add_to(self.map)
+              ).add_child(folium.Popup(label+': '+nc)).add_to(self.map)
 
     def plot_number_of_cases_for_all_dataframes(self,date):
-          self.plot_number_of_cases(self.confirmed_cases.aggregated,date,'blue')
-          self.plot_number_of_cases(self.deaths.aggregated,date,'red')
-          self.plot_number_of_cases(self.recoveries.aggregated,date,'green')
+          self.plot_number_of_cases(self.confirmed_cases.aggregated,date,'blue','Confirmed cases')
+          self.plot_number_of_cases(self.deaths.aggregated,date,'red','Deaths')
+          self.plot_number_of_cases(self.recoveries.aggregated,date,'green','Recoveries')
           
 
 
@@ -93,11 +93,6 @@ covid_data=CovidData()
 covid_data.populate(my_date)
 covid_data.plot_number_of_cases_for_all_dataframes(my_date)
 
-#iframe = folium.IFrame(str(my_date), width=700, height=450)
-#popup = folium.Popup(str(my_date), max_width=3000)
-#Text = folium.Marker(location=[70,0], popup=popup,
-#                     icon=folium.Icon(icon_color='green'))
-#covid_data.map.add_child(Text)
 
 legend_html =   '''
                 <div style="position: fixed; 
