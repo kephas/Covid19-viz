@@ -91,7 +91,7 @@ covid_data.plot_number_of_cases_for_all_dataframes(my_date)
 #covid_data.map.save("./test.html")
 app = Flask(__name__)
 @app.route("/")
-app.listen(process.env.PORT || 3000, function(){console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);});
+#app.listen(process.env.PORT || 3000, function(){console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);});
 def display_map():
      return covid_data.map._repr_html_()
 
