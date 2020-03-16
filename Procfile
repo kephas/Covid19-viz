@@ -1,1 +1,1 @@
-web: FLASK_APP=plot_covid_data.py flask run --port=$PORT
+web: gunicorn plot_covid_data:app
