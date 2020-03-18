@@ -22,7 +22,7 @@ import geopandas as gpd
 import numpy as np
 import collections
 
-import france
+import france_data
 
 
 
@@ -31,12 +31,15 @@ import france
 class CovidData(object):
 
     def __init__(self):
-        url = "https://raw.githubusercontent.com/opencovid19-fr/data/master/agences-regionales-sante/grand-est/2020-03-16.yaml"#open url
-        testyaml=yaml.safe_load(urllib.request.urlopen(url).read())
-        self.Cases = {
-                      "REG-44": testyaml,
-                      }
-        self.Coordinates = {
+         FR=france_data.FranceData()
+         FR.load_latest()
+         self.Cases=FR.load_latest()
+#        url = "https://raw.githubusercontent.com/opencovid19-fr/data/master/agences-regionales-sante/grand-est/2020-03-16.yaml"#open url
+#        testyaml=yaml.safe_load(urllib.request.urlopen(url).read())
+#        self.Cases = {
+#                      "REG-44": testyaml,
+#                      }
+         self.Coordinates = {
                   'DEP-29': [48.26111111, -4.058888889], 
                   'DEP-22': [48.44111111, -2.864166667], 
                   'DEP-56': [47.84638889, -2.81], 
@@ -135,9 +138,9 @@ class CovidData(object):
                   'DEP-2B': [41.86361111, 8.988055556]
                   }
         
-#        print(collections.OrderedDict(sorted(self.Coordinates.items())))
+
         
-        self.map = folium.Map(location=[46,2],
+         self.map = folium.Map(location=[46,2],
               tiles = 'Stamen Terrain',
               zoom_start=6)
         
@@ -146,10 +149,10 @@ class CovidData(object):
     def plot_number_of_cases(self):
           for key in self.Coordinates:
                for region in self.Cases:
-                   for i in np.arange(len(self.Cases['REG-44']['donneesDepartementales'])):
-                        if self.Cases['REG-44']['donneesDepartementales'][i]['code']==key:   
-                             ra=self.Cases['REG-44']['donneesDepartementales'][i]['casConfirmes']
-                             nom=self.Cases['REG-44']['donneesDepartementales'][i]['nom']
+                   for i in np.arange(len(self.Cases[region]['donneesDepartementales'])):
+                        if self.Cases[region]['donneesDepartementales'][i]['code']==key:   
+                             ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
+                             nom=self.Cases[region]['donneesDepartementales'][i]['nom']
                              custom_color='red'
                              folium.Circle(
                                   location=self.Coordinates[key],
@@ -179,8 +182,7 @@ legend_html =   '''
                 
 
 
-FR=france.FranceData()
-FR.load_latest()
+
             
 CODA=CovidData()
 CODA.plot_number_of_cases()
