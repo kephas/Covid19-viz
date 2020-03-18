@@ -5,7 +5,7 @@ region_directories:
 #  - bourgogne-franche-comte
 #  - bretagne
 #  - centre-val-de-loire
-#  - corse
+  - corse
   - grand-est
 #  - Guyane
 #  - hauts-de-france
