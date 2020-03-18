@@ -149,8 +149,10 @@ class CovidData(object):
     def plot_number_of_cases(self):
           for key in self.Coordinates:
                for region in self.Cases:
+#                   print(region)
                    for i in np.arange(len(self.Cases[region]['donneesDepartementales'])):
                         if self.Cases[region]['donneesDepartementales'][i]['code']==key:   
+#                             pdb.set_trace()
                              ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
                              nom=self.Cases[region]['donneesDepartementales'][i]['nom']
                              custom_color='red'
@@ -167,7 +169,6 @@ class CovidData(object):
                              nom='missing data'
                              custom_color='blue'
                              
-
                         
 
 
@@ -187,5 +188,12 @@ legend_html =   '''
 CODA=CovidData()
 CODA.plot_number_of_cases()
 CODA.map.get_root().html.add_child(folium.Element(legend_html))
-CODA.map.save("./mytestREGION.html")
+#CODA.map.save("./mytestREGION.html")
 
+app = Flask(__name__)
+@app.route("/")
+def display_map():
+     return CODA.map._repr_html_()
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
