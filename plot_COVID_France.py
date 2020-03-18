@@ -164,7 +164,7 @@ class CovidData(object):
                                             color=custom_color,
                                             fill_color=custom_color,
                                             fill_opacity=0.5
-                                            ).add_child(folium.Popup(str(nom)+' - nombre de cas '+str(ra))).add_to(self.map)  
+                                            ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+' - nombre de cas '+str(ra))).add_to(self.map)  
                              
                         
 
