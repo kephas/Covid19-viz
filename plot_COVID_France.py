@@ -146,27 +146,25 @@ class CovidData(object):
 
 
     def plot_number_of_cases(self):
-          for key in self.Coordinates:
-               for region in self.Cases:
-#                   print(region)
-                   for i in np.arange(len(self.Cases[region]['donneesDepartementales'])):
-                        if self.Cases[region]['donneesDepartementales'][i]['code']==key:   
-#                             pdb.set_trace()
-                             ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
-                             nom=self.Cases[region]['donneesDepartementales'][i]['nom']
-                             custom_color='red'
-                             folium.Circle(
-                                  location=self.Coordinates[key],
-                                  radius=100*ra,
-                                  fill=True,
-                                  color=custom_color,
-                                  fill_color=custom_color,
-                                  fill_opacity=0.5
-                                  ).add_child(folium.Popup(str(nom)+': '+str(ra)+' cas confirmés')).add_to(self.map)                       
-                        else:
-                             ra=0
-                             nom='missing data'
-                             custom_color='blue'
+         for region in self.Cases:
+              if self.Cases[region].get('donneesDepartementales') != None:
+                   for i, departement in enumerate(self.Cases[region]['donneesDepartementales']):
+                        if self.Cases[region]['donneesDepartementales'][i].get('code') != None:
+                             if self.Coordinates.get(self.Cases[region]['donneesDepartementales'][i]['code']) != None:
+                                 print(self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']])
+                                 if self.Cases[region]['donneesDepartementales'][i].get('casConfirmes') != None:
+                                      print(self.Cases[region]['donneesDepartementales'][i]['casConfirmes'])
+                                      ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
+                                      nom=self.Cases[region]['donneesDepartementales'][i]['nom']
+                                      custom_color='red'
+                                      folium.Circle(
+                                            location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
+                                            radius=100*ra,
+                                            fill=True,
+                                            color=custom_color,
+                                            fill_color=custom_color,
+                                            fill_opacity=0.5
+                                            ).add_child(folium.Popup(str(nom)+'- nombre de cas '+str(ra))).add_to(self.map)  
                              
                         
 
