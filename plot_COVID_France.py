@@ -18,7 +18,6 @@ import earthpy as et
 import pdb 
 import flask
 from flask import Flask
-import geopandas as gpd
 import numpy as np
 import collections
 
