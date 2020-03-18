@@ -159,6 +159,7 @@ class CovidData(object):
               zoom_start=6)
         
     def plot_number_of_cases(self):
+         pdb.set_trace()
          for region in self.Cases:
               if self.Cases[region].get('donneesRegionales') != None:
                    if self.Cases[region]['donneesRegionales'].get('casConfirmes') !=None:
@@ -180,21 +181,21 @@ class CovidData(object):
                    for i, departement in enumerate(self.Cases[region]['donneesDepartementales']):
                         if self.Cases[region]['donneesDepartementales'][i].get('code') != None:
                              if self.Coordinates.get(self.Cases[region]['donneesDepartementales'][i]['code']) != None:
-                                      ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
-                                      nom=self.Cases[region]['donneesDepartementales'][i]['nom']
-                                      custom_color='red'
-                                      date=self.Cases[region]['date']                                      
-                                      if type(self.Cases[region]['date']) is datetime.date:
-                                           date=self.Cases[region]['date'].strftime("%Y-%m-%d")
-                                      folium.Circle(
-                                            location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
-#                                            radius=1000*ra**0.5,
-                                            radius=5000*np.log(ra),
-                                            fill=True,
-                                            color=custom_color,
-                                            fill_color=custom_color,
-                                            fill_opacity=0.5
-                                            ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
+                                      if self.Cases[region]['donneesDepartementales'][i]['casConfirmes'] != None:
+                                           ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
+                                           nom=self.Cases[region]['donneesDepartementales'][i]['nom']
+                                           custom_color='red'
+                                           date=self.Cases[region]['date']                                      
+                                           if type(self.Cases[region]['date']) is datetime.date:
+                                                date=self.Cases[region]['date'].strftime("%Y-%m-%d")
+                                           folium.Circle(
+                                                 location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
+                                                 radius=5000*np.log(ra),
+                                                 fill=True,
+                                                 color=custom_color,
+                                                 fill_color=custom_color,
+                                                 fill_opacity=0.5
+                                                 ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
 
 
 #    def plot_number_of_cases(self):
@@ -258,12 +259,12 @@ legend_html =   '''
 CODA=CovidData()
 CODA.plot_number_of_cases()
 CODA.map.get_root().html.add_child(folium.Element(legend_html))
-#CODA.map.save("./mytestREGION.html")
+CODA.map.save("./mytestREGION.html")
 
-app = Flask(__name__)
-@app.route("/")
-def display_map():
-     return CODA.map._repr_html_()
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
+#app = Flask(__name__)
+#@app.route("/")
+#def display_map():
+#     return CODA.map._repr_html_()
+#
+#if __name__ == "__main__":
+#    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
