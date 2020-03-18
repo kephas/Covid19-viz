@@ -159,7 +159,6 @@ class CovidData(object):
               zoom_start=6)
         
     def plot_number_of_cases(self):
-         pdb.set_trace()
          for region in self.Cases:
               if self.Cases[region].get('donneesRegionales') != None:
                    if self.Cases[region]['donneesRegionales'].get('casConfirmes') !=None:
@@ -259,12 +258,12 @@ legend_html =   '''
 CODA=CovidData()
 CODA.plot_number_of_cases()
 CODA.map.get_root().html.add_child(folium.Element(legend_html))
-CODA.map.save("./mytestREGION.html")
+#CODA.map.save("./mytestREGION.html")
 
-#app = Flask(__name__)
-#@app.route("/")
-#def display_map():
-#     return CODA.map._repr_html_()
-#
-#if __name__ == "__main__":
-#    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
+app = Flask(__name__)
+@app.route("/")
+def display_map():
+     return CODA.map._repr_html_()
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
