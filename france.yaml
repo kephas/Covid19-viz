@@ -13,6 +13,6 @@ region_directories:
 #  - Martinique
   - normandie
   - nouvelle-aquitaine
-#  - occitanie
-#  - pays-de-la-loire
+  - occitanie
+  - pays-de-la-loire
 #  - provence-alpes-cote-dazur
