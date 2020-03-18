@@ -7,6 +7,7 @@ import datetime
 import copy
 import urllib
 import yaml
+import pdb
 
 class FranceData:
     def __init__(self):

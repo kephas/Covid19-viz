@@ -1,1 +1,1 @@
-web: gunicorn plot_covid_data:app
+web: gunicorn plot_COVID_France:app
