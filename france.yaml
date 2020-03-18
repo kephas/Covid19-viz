@@ -1,5 +1,5 @@
 url_template: https://raw.githubusercontent.com/opencovid19-fr/data/master/agences-regionales-sante/{region}/{date}.yaml
-forced_date: 2020-03-16
+forced_date: ''
 region_directories:
 #  - auvergne-rhone-alpes
 #  - bourgogne-franche-comte
@@ -9,7 +9,7 @@ region_directories:
   - grand-est
 #  - Guyane
   - hauts-de-france
-#  - ile-de-france
+  - ile-de-france
 #  - Martinique
 #  - normandie
 #  - nouvelle-aquitaine
