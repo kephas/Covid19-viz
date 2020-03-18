@@ -180,7 +180,7 @@ class CovidData(object):
                    for i, departement in enumerate(self.Cases[region]['donneesDepartementales']):
                         if self.Cases[region]['donneesDepartementales'][i].get('code') != None:
                              if self.Coordinates.get(self.Cases[region]['donneesDepartementales'][i]['code']) != None:
-                                      if self.Cases[region]['donneesDepartementales'][i]['casConfirmes'] != None:
+                                      if self.Cases[region]['donneesDepartementales'][i].get('casConfirmes') != None:
                                            ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
                                            nom=self.Cases[region]['donneesDepartementales'][i]['nom']
                                            custom_color='red'
@@ -197,46 +197,6 @@ class CovidData(object):
                                                  ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
 
 
-#    def plot_number_of_cases(self):
-#         for region in self.Cases:
-#              if self.Cases[region].get('donneesDepartementales') != None:
-#                   for i, departement in enumerate(self.Cases[region]['donneesDepartementales']):
-#                        if self.Cases[region]['donneesDepartementales'][i].get('code') != None:
-#                             if self.Coordinates.get(self.Cases[region]['donneesDepartementales'][i]['code']) != None:
-#                                 print(self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']])
-#                                 if self.Cases[region]['donneesDepartementales'][i].get('casConfirmes') != None:
-#                                      print(self.Cases[region]['donneesDepartementales'][i]['casConfirmes'])
-#                                      ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
-#                                      nom=self.Cases[region]['donneesDepartementales'][i]['nom']
-#                                      custom_color='red'
-#                                      date=self.Cases[region]['date']                                      
-#                                      if type(self.Cases[region]['date']) is datetime.date:
-#                                           date=self.Cases[region]['date'].strftime("%Y-%m-%d")
-#                                      folium.Circle(
-#                                            location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
-##                                            radius=1000*ra**0.5,
-#                                            radius=5000*np.log(ra),
-#                                            fill=True,
-#                                            color=custom_color,
-#                                            fill_color=custom_color,
-#                                            fill_opacity=0.5
-#                                            ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
-#              else:
-#                   if self.Cases[region].get('donneesRegionales') != None:
-#                        ra=self.Cases[region]['donneesRegionales']['casConfirmes']
-#                        nom=self.Cases[region]['donneesRegionales']['nom']
-#                        custom_color='orange'
-#                        date=self.Cases[region]['date']                                      
-#                        if type(self.Cases[region]['date']) is datetime.date:
-#                             date=self.Cases[region]['date'].strftime("%Y-%m-%d")
-#                        folium.Circle(
-#                                  location=self.Coordinates[self.Cases[region]['donneesRegionales']['code']],
-#                                  radius=5000*np.log(ra),
-#                                  fill=True,
-#                                  color=custom_color,
-#                                  fill_color=custom_color,
-#                                  fill_opacity=0.5
-#                                  ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)      
                              
                         
 
