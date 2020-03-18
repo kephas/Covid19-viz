@@ -161,7 +161,7 @@ class CovidData(object):
                                       folium.Circle(
                                             location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
 #                                            radius=1000*ra**0.5,
-                                            radius=100*ra,
+                                            radius=5000*np.log(ra),
                                             fill=True,
                                             color=custom_color,
                                             fill_color=custom_color,
@@ -173,7 +173,7 @@ class CovidData(object):
                                       custom_color='blue'      
                                       folium.Circle(
                                             location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
-                                            radius=100*ra,
+                                            radius=5000*np.log(ra),
                                             fill=True,
                                             color=custom_color,
                                             fill_color=custom_color,
@@ -187,7 +187,7 @@ class CovidData(object):
                         custom_color='orange'
                         folium.Circle(
                                   location=self.Coordinates[self.Cases[region]['donneesRegionales']['code']],
-                                  radius=100*ra,
+                                  radius=5000*np.log(ra),
                                   fill=True,
                                   color=custom_color,
                                   fill_color=custom_color,
@@ -199,10 +199,10 @@ class CovidData(object):
 
 legend_html =   '''
                 <div style="position: fixed; 
-                            bottom: 500px; left: 50px; width: 350px; height: 50px; 
+                            bottom: 500px; left: 50px; width: 350px; height: 100px; 
                             border:2px solid grey; z-index:9999; font-size:14px;
                             ">&nbsp; OpenCOVID19 - 16 Mars 2020 <br>
-                              &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i><br>
+                              &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red">
                               &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i><br>                              
                 </div>
                 '''
