@@ -13,15 +13,16 @@ class FranceData:
         self.loaded_data = {}
         self.config = yaml.load(open('france.yaml').read()) or {}
 
-    def load_latest(self):
-        date = ''
+    def latest_date(self):
         if self.config.get('forced_date'):
-            date = self.config['forced_date']
+            return self.config['forced_date']
         else:
-            date = self.load_date(datetime.date.today().isoformat())
-        self.load_date(date)
+            return self.load_date(date.today().isoformat())
 
-        return self.clean_data()[date]
+    def load_latest(self):
+        latest_date = self.latest_date()
+        self.load_date(latest_date)
+        return self.clean_data()[latest_date]
 
 
     def load_date(self, date):
