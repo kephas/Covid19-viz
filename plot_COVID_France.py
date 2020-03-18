@@ -171,22 +171,22 @@ class CovidData(object):
                         
 
 
-legend_html =   '''
-                <div style="position: fixed; 
-                            bottom: 500px; left: 50px; width: 350px; height: 50px; 
-                            border:2px solid grey; z-index:9999; font-size:14px;
-                            ">&nbsp; Données OpenCOVID19 du 16 Mars 2020 <br>
-                              &nbsp; Cas confirmés de COVID-19 par département &nbsp; <i class="fa fa-circle" style="color:red"></i><br>
-                </div>
-                '''
-                
+#legend_html =   '''
+#                <div style="position: fixed; 
+#                            bottom: 500px; left: 50px; width: 350px; height: 50px; 
+#                            border:2px solid grey; z-index:9999; font-size:14px;
+#                            ">&nbsp; Données OpenCOVID19 du 16 Mars 2020 <br>
+#                              &nbsp; Cas confirmés de COVID-19 par département &nbsp; <i class="fa fa-circle" style="color:red"></i><br>
+#                </div>
+#                '''
+#                
 
 
 
             
 CODA=CovidData()
 CODA.plot_number_of_cases()
-CODA.map.get_root().html.add_child(folium.Element(legend_html))
+#CODA.map.get_root().html.add_child(folium.Element(legend_html))
 #CODA.map.save("./mytestREGION.html")
 
 app = Flask(__name__)
