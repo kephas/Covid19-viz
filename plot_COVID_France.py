@@ -20,6 +20,8 @@ import flask
 from flask import Flask
 import numpy as np
 import collections
+import datetime
+import numpy as np
 
 import france_data
 
@@ -31,14 +33,27 @@ class CovidData(object):
 
     def __init__(self):
          FR=france_data.FranceData()
-         FR.load_latest()
-         self.Cases=FR.load_latest()
+         FR.load_latest_single()
+         self.Cases=FR.load_latest_single()
 #        url = "https://raw.githubusercontent.com/opencovid19-fr/data/master/agences-regionales-sante/grand-est/2020-03-16.yaml"#open url
 #        testyaml=yaml.safe_load(urllib.request.urlopen(url).read())
 #        self.Cases = {
 #                      "REG-44": testyaml,
 #                      }
          self.Coordinates = {
+                  'REG-52': [47.4667, -0.7833],
+                  'REG-27': [47.24, 4.818],
+                  'REG-32': [49.9667, 2.7833],      
+                  'REG-84': [45.5167, 4.5333],
+                  'REG-76': [43.7073, 2.1385],
+                  'REG-53': [48.2, -2.85],
+                  'REG-24': [47.5, 1.6833],
+                  'REG-94': [42.1667, 9.1667],
+                  'REG-44': [48.6833, 5.6167],
+                  'REG-11': [48.7, 2.5],
+                  'REG-28': [49.1333, 0.1],
+                  'REG-75': [45.2, 0.1833],
+                  'REG-93': [43.9333, 6.0333],                
                   'DEP-29': [48.26111111, -4.058888889], 
                   'DEP-22': [48.44111111, -2.864166667], 
                   'DEP-56': [47.84638889, -2.81], 
@@ -143,38 +158,56 @@ class CovidData(object):
               tiles = 'Stamen Terrain',
               zoom_start=6)
         
-
-
     def plot_number_of_cases(self):
          for region in self.Cases:
+              if self.Cases[region].get('donneesRegionales') != None:
+                   if self.Cases[region]['donneesRegionales'].get('casConfirmes') !=None:
+                        ra=self.Cases[region]['donneesRegionales']['casConfirmes']
+                        nom=self.Cases[region]['donneesRegionales']['nom']
+                        custom_color='orange'
+                        date=self.Cases[region]['date']                                      
+                        if type(self.Cases[region]['date']) is datetime.date:
+                             date=self.Cases[region]['date'].strftime("%Y-%m-%d")
+                        folium.Circle(
+                                  location=self.Coordinates[self.Cases[region]['donneesRegionales']['code']],
+                                  radius=5000*np.log(ra),
+                                  fill=True,
+                                  color=custom_color,
+                                  fill_color=custom_color,
+                                  fill_opacity=0.5
+                             ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)      
               if self.Cases[region].get('donneesDepartementales') != None:
                    for i, departement in enumerate(self.Cases[region]['donneesDepartementales']):
                         if self.Cases[region]['donneesDepartementales'][i].get('code') != None:
                              if self.Coordinates.get(self.Cases[region]['donneesDepartementales'][i]['code']) != None:
-                                 print(self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']])
-                                 if self.Cases[region]['donneesDepartementales'][i].get('casConfirmes') != None:
-                                      print(self.Cases[region]['donneesDepartementales'][i]['casConfirmes'])
-                                      ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
-                                      nom=self.Cases[region]['donneesDepartementales'][i]['nom']
-                                      custom_color='red'
-                                      folium.Circle(
-                                            location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
-                                            radius=100*ra,
-                                            fill=True,
-                                            color=custom_color,
-                                            fill_color=custom_color,
-                                            fill_opacity=0.5
-                                            ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+' - nombre de cas '+str(ra))).add_to(self.map)  
+                                      if self.Cases[region]['donneesDepartementales'][i].get('casConfirmes') != None:
+                                           ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
+                                           nom=self.Cases[region]['donneesDepartementales'][i]['nom']
+                                           custom_color='red'
+                                           date=self.Cases[region]['date']                                      
+                                           if type(self.Cases[region]['date']) is datetime.date:
+                                                date=self.Cases[region]['date'].strftime("%Y-%m-%d")
+                                           folium.Circle(
+                                                 location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
+                                                 radius=5000*np.log(ra),
+                                                 fill=True,
+                                                 color=custom_color,
+                                                 fill_color=custom_color,
+                                                 fill_opacity=0.5
+                                                 ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
+
+
                              
                         
 
 
 legend_html =   '''
                 <div style="position: fixed; 
-                            bottom: 500px; left: 50px; width: 350px; height: 50px; 
+                            bottom: 500px; left: 50px; width: 350px; height: 75px; 
                             border:2px solid grey; z-index:9999; font-size:14px;
-                            ">&nbsp; OpenCOVID19 - 16 Mars 2020 <br>
-                              &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i><br>
+                            ">&nbsp; Donnees OpenCOVID19<br>
+                              &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i><br>
+                              &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i>
                 </div>
                 '''
                 
