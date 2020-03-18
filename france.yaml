@@ -1,0 +1,5 @@
+url_template: https://raw.githubusercontent.com/opencovid19-fr/data/master/agences-regionales-sante/{region}/{date}.yaml
+forced_date: 2020-03-16
+region_directories:
+  - corse
+  - grand-est
