@@ -205,9 +205,9 @@ legend_html =   '''
                 <div style="position: fixed; 
                             bottom: 500px; left: 50px; width: 350px; height: 75px; 
                             border:2px solid grey; z-index:9999; font-size:14px;
-                            ">&nbsp; Donnees OpenCOVID19 du 16 Mars 2020 <br>
-                              &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i><br>
-                              &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i>
+                            ">&nbsp; Donnees OpenCOVID19<br>
+                              &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i><br>
+                              &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i>
                 </div>
                 '''
                 
