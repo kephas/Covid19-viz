@@ -6,6 +6,7 @@
 from datetime import date
 import urllib
 import yaml
+import pdb
 
 class FranceData:
     def __init__(self):
@@ -13,14 +14,14 @@ class FranceData:
         self.config = yaml.safe_load(open('france.yaml').read())
 
     def load_latest(self):
-        date = ''
+        latest_date = ''
         if self.config['forced_date']:
-            date = self.config['forced_date']
+            latest_date = self.config['forced_date']
         else:
-            date = self.load_date(date.today().isoformat())
-        self.load_date(date)
+            latest_date = self.load_date(date.today().isoformat())
+        self.load_date(latest_date)
 
-        result = self.loaded_data[date]
+        result = self.loaded_data[latest_date]
         result.pop('processed')
         result.pop('errors')
 
