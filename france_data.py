@@ -4,6 +4,7 @@
 # https://github.com/opencovid19-fr/data
 
 import datetime
+import copy
 import urllib
 import yaml
 
@@ -20,11 +21,8 @@ class FranceData:
             date = self.load_date(datetime.date.today().isoformat())
         self.load_date(date)
 
-        result = self.loaded_data[date]
-        result.pop('processed')
-        result.pop('errors')
+        return self.clean_data()[date]
 
-        return result
 
     def load_date(self, date):
         self.loaded_data[date] = {'processed': 0, 'errors': 0}
@@ -39,3 +37,10 @@ class FranceData:
             self.loaded_data[date]['errors'] += 1
 
         self.loaded_data[date]['processed'] += 1
+
+    def clean_data(self):
+        result = copy.deepcopy(self.loaded_data)
+        for date in result.keys():
+            result[date].pop('processed')
+            result[date].pop('errors')
+        return result
