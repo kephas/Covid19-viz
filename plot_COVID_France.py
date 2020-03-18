@@ -180,9 +180,6 @@ class CovidData(object):
                    for i, departement in enumerate(self.Cases[region]['donneesDepartementales']):
                         if self.Cases[region]['donneesDepartementales'][i].get('code') != None:
                              if self.Coordinates.get(self.Cases[region]['donneesDepartementales'][i]['code']) != None:
-                                 print(self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']])
-                                 if self.Cases[region]['donneesDepartementales'][i].get('casConfirmes') != None:
-                                      print(self.Cases[region]['donneesDepartementales'][i]['casConfirmes'])
                                       ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
                                       nom=self.Cases[region]['donneesDepartementales'][i]['nom']
                                       custom_color='red'
