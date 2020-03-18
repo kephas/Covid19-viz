@@ -20,6 +20,7 @@ import flask
 from flask import Flask
 import numpy as np
 import collections
+import datetime
 
 import france_data
 
@@ -160,6 +161,9 @@ class CovidData(object):
                                       ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
                                       nom=self.Cases[region]['donneesDepartementales'][i]['nom']
                                       custom_color='red'
+                                      date=self.Cases[region]['date']                                      
+                                      if type(self.Cases[region]['date']) is datetime.date:
+                                           date=self.Cases[region]['date'].strftime("%Y-%m-%d")
                                       folium.Circle(
                                             location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
 #                                            radius=1000*ra**0.5,
@@ -168,25 +172,15 @@ class CovidData(object):
                                             color=custom_color,
                                             fill_color=custom_color,
                                             fill_opacity=0.5
-                                            ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas '+str(ra))).add_to(self.map)                       
-                                 else:
-                                      ra=0
-                                      nom='absence de donnees departementales'
-                                      custom_color='blue'      
-                                      folium.Circle(
-                                            location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
-                                            radius=5000*np.log(ra),
-                                            fill=True,
-                                            color=custom_color,
-                                            fill_color=custom_color,
-                                            fill_opacity=0.5
-                                            ).add_child(folium.Popup(str(nom)+'- nombre de cas '+str(ra))).add_to(self.map)   
-              else:
+                                            ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
+               else:
                    if self.Cases[region].get('donneesRegionales') != None:
-                        print('OK')
                         ra=self.Cases[region]['donneesRegionales']['casConfirmes']
                         nom=self.Cases[region]['donneesRegionales']['nom']
                         custom_color='orange'
+                        date=self.Cases[region]['date']                                      
+                        if type(self.Cases[region]['date']) is datetime.date:
+                             date=self.Cases[region]['date'].strftime("%Y-%m-%d")
                         folium.Circle(
                                   location=self.Coordinates[self.Cases[region]['donneesRegionales']['code']],
                                   radius=5000*np.log(ra),
@@ -194,7 +188,7 @@ class CovidData(object):
                                   color=custom_color,
                                   fill_color=custom_color,
                                   fill_opacity=0.5
-                                  ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas '+str(ra))).add_to(self.map)        
+                                  ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)      
                              
                         
 
