@@ -10,11 +10,11 @@ import yaml
 class FranceData:
     def __init__(self):
         self.loaded_data = {}
-        self.config = yaml.load(open('france.yaml').read())
+        self.config = yaml.load(open('france.yaml').read()) or {}
 
     def load_latest(self):
         date = ''
-        if self.config['forced_date']:
+        if self.config.get('forced_date'):
             date = self.config['forced_date']
         else:
             date = self.load_date(datetime.date.today().isoformat())
