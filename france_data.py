@@ -19,14 +19,14 @@ class FranceData:
         else:
             return self.load_date(date.today().isoformat())
 
-    def load_latest(self):
+    def load_latest_single(self):
         latest_date = self.latest_date()
-        self.load_date(latest_date)
+        self.load_single_date(latest_date)
         return self.clean_data()[latest_date]
 
 
-    def load_date(self, date):
-        self.loaded_data[date] = {'processed': 0, 'errors': 0}
+    def load_single_date(self, date):
+        self.loaded_data[date] = {'processed': 0, 'errors': []}
         for directory in self.config['region_directories']:
             self.load_region(date, directory)
 
