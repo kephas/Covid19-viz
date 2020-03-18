@@ -1,5 +1,6 @@
 url_template: https://raw.githubusercontent.com/opencovid19-fr/data/master/agences-regionales-sante/{region}/{date}.yaml
 forced_date: '2020-03-17'
+consolidated_limit: 7
 region_directories:
 #  - auvergne-rhone-alpes
 #  - bourgogne-franche-comte

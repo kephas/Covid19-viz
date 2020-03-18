@@ -26,14 +26,16 @@ class FranceData:
         return self.clean_data()[latest_date]
 
     def load_latest_consolidated(self):
-        latest_date = self.latest_date()
-        self.load_consolidated_date(latest_date)
-        return self.clean_data()
+        return self.load_consolidated_date(self.latest_date())
 
-    def load_consolidated_date(self, last_date):
-        self.load_single_date(last_date)
-        if len(self.loaded_data[last_date]['errors']) > 0:
-            self.load_single_date(self.date_before(last_date))
+    def load_consolidated_date(self, last_date, limit=None, directories=None):
+        if limit == None:
+            limit = self.config['consolidated_limit']
+        self.load_single_date(last_date, directories)
+        if len(self.loaded_data[last_date]['errors']) > 0 and limit > 1:
+            return self.load_consolidated_date(self.date_before(last_date), limit - 1, self.loaded_data[last_date]['errors'])
+        else:
+            return self.clean_data()
 
     def load_single_date(self, date, directories=None):
         if directories == None:
