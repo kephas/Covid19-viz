@@ -165,6 +165,20 @@ class CovidData(object):
                                             fill_color=custom_color,
                                             fill_opacity=0.5
                                             ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+' - nombre de cas '+str(ra))).add_to(self.map)  
+              else:
+                   if self.Cases[region].get('donneesRegionales') != None:
+                        print('OK')
+                        ra=self.Cases[region]['donneesRegionales']['casConfirmes']
+                        nom=self.Cases[region]['donneesRegionales']['nom']
+                        custom_color='orange'
+                        folium.Circle(
+                                  location=self.Coordinates[self.Cases[region]['donneesRegionales']['code']],
+                                  radius=100*ra,
+                                  fill=True,
+                                  color=custom_color,
+                                  fill_color=custom_color,
+                                  fill_opacity=0.5
+                                  ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas '+str(ra))).add_to(self.map)        
                              
                         
 
@@ -175,6 +189,7 @@ legend_html =   '''
                             border:2px solid grey; z-index:9999; font-size:14px;
                             ">&nbsp; OpenCOVID19 - 16 Mars 2020 <br>
                               &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i><br>
+                              &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i><br>                              
                 </div>
                 '''
                 
