@@ -3,7 +3,7 @@
 # this module retrieves regional data from a Github repository
 # https://github.com/opencovid19-fr/data
 
-from datetime import date
+import datetime
 import urllib
 import yaml
 
@@ -17,7 +17,7 @@ class FranceData:
         if self.config['forced_date']:
             date = self.config['forced_date']
         else:
-            date = self.load_date(date.today().isoformat())
+            date = self.load_date(datetime.date.today().isoformat())
         self.load_date(date)
 
         result = self.loaded_data[date]
