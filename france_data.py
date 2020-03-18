@@ -35,9 +35,11 @@ class FranceData:
         if len(self.loaded_data[last_date]['errors']) > 0:
             self.load_single_date(self.date_before(last_date))
 
-    def load_single_date(self, date):
+    def load_single_date(self, date, directories=None):
+        if directories == None:
+            directories = self.config['region_directories']
         self.loaded_data[date] = {'processed': 0, 'errors': []}
-        for directory in self.config['region_directories']:
+        for directory in directories:
             self.load_region(date, directory)
 
     def load_region(self, date, region):
