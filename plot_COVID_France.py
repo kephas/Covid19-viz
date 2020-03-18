@@ -173,7 +173,7 @@ class CovidData(object):
                                             fill_color=custom_color,
                                             fill_opacity=0.5
                                             ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
-               else:
+              else:
                    if self.Cases[region].get('donneesRegionales') != None:
                         ra=self.Cases[region]['donneesRegionales']['casConfirmes']
                         nom=self.Cases[region]['donneesRegionales']['nom']
