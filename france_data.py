@@ -10,7 +10,7 @@ import yaml
 class FranceData:
     def __init__(self):
         self.loaded_data = {}
-        self.config = yaml.load(open('france.yaml').read())
+        self.config = yaml.safe_load(open('france.yaml').read())
 
     def load_latest(self):
         date = ''
@@ -33,7 +33,7 @@ class FranceData:
 
     def load_region(self, date, region):
         try:
-            region_data = yaml.load(urllib.request.urlopen(self.config['url_template'].format(region=region, date=date)).read())
+            region_data = yaml.safe_load(urllib.request.urlopen(self.config['url_template'].format(region=region, date=date)).read())
             self.loaded_data[date][region_data['donneesRegionales']['code']] = region_data
         except:
             self.loaded_data[date]['errors'] += 1
