@@ -32,7 +32,7 @@ class FranceData:
 
     def load_region(self, date, region):
         try:
-            region_data = yaml.load(urllib.request.urlopen(self.config['url_template'].format(region=region, date=date)).read())
+            region_data = yaml.safe_load(urllib.request.urlopen(self.config['url_template'].format(region=region, date=date)).read())
             self.loaded_data[date][region_data['donneesRegionales']['code']] = region_data
         except:
             self.loaded_data[date]['errors'] += 1
