@@ -39,6 +39,7 @@ class CovidData(object):
 #                      "REG-44": testyaml,
 #                      }
          self.Coordinates = {
+                  'REG-52': [47.36138889, -1.682222222],
                   'DEP-29': [48.26111111, -4.058888889], 
                   'DEP-22': [48.44111111, -2.864166667], 
                   'DEP-56': [47.84638889, -2.81], 
@@ -159,12 +160,25 @@ class CovidData(object):
                                       custom_color='red'
                                       folium.Circle(
                                             location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
+#                                            radius=1000*ra**0.5,
                                             radius=100*ra,
                                             fill=True,
                                             color=custom_color,
                                             fill_color=custom_color,
                                             fill_opacity=0.5
-                                            ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+' - nombre de cas '+str(ra))).add_to(self.map)  
+                                            ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas '+str(ra))).add_to(self.map)                       
+                                 else:
+                                      ra=0
+                                      nom='absence de donnees departementales'
+                                      custom_color='blue'      
+                                      folium.Circle(
+                                            location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
+                                            radius=100*ra,
+                                            fill=True,
+                                            color=custom_color,
+                                            fill_color=custom_color,
+                                            fill_opacity=0.5
+                                            ).add_child(folium.Popup(str(nom)+'- nombre de cas '+str(ra))).add_to(self.map)   
               else:
                    if self.Cases[region].get('donneesRegionales') != None:
                         print('OK')
