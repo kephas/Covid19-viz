@@ -21,6 +21,7 @@ from flask import Flask
 import numpy as np
 import collections
 import datetime
+import numpy as np
 
 import france_data
 
