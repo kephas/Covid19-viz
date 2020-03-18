@@ -7,12 +7,12 @@ region_directories:
   - centre-val-de-loire
   - corse
   - grand-est
-  - Guyane
-  - hauts-de-france
-  - ile-de-france
-  - Martinique
-  - normandie
-  - nouvelle-aquitaine
-  - occitanie
-  - pays-de-la-loire
-  - provence-alpes-cote-dazur
+#  - Guyane
+#  - hauts-de-france
+#  - ile-de-france
+#  - Martinique
+#  - normandie
+#  - nouvelle-aquitaine
+#  - occitanie
+#  - pays-de-la-loire
+#  - provence-alpes-cote-dazur
