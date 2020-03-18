@@ -8,7 +8,7 @@ region_directories:
   - corse
   - grand-est
 #  - Guyane
-#  - hauts-de-france
+  - hauts-de-france
 #  - ile-de-france
 #  - Martinique
 #  - normandie
