@@ -11,8 +11,8 @@ region_directories:
   - hauts-de-france
   - ile-de-france
 #  - Martinique
-#  - normandie
-#  - nouvelle-aquitaine
+  - normandie
+  - nouvelle-aquitaine
 #  - occitanie
 #  - pays-de-la-loire
 #  - provence-alpes-cote-dazur
