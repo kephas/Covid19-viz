@@ -5,4 +5,4 @@ rtree>=0.8,<0.9
 rasterio
 earthpy
 gunicorn
-yaml
+pyyaml
