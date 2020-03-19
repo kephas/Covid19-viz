@@ -8,7 +8,6 @@ Created on Tue Mar 17 19:27:56 2020
 import os
 import urllib
 import yaml  
-import pandas as pd
 import folium
 from folium import plugins
 from folium import IFrame
