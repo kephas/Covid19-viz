@@ -26,6 +26,15 @@ import france_data
 
 
 
+legend_html_template = '''
+<div style="position: fixed;
+     bottom: 500px; left: 50px; width: 350px; height: 75px;
+     border:2px solid grey; z-index:9999; font-size:14px;
+     ">&nbsp; Donnees OpenCOVID19 du {date_first} au {date_last}<br>
+     &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i><br>
+     &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i>
+</div>
+'''
 
 
 class CovidData(object):
@@ -196,24 +205,18 @@ class CovidData(object):
                                                  ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
 
 
-    def plot_number_of_cases(self):
-         for recovered_date in self.dates:
-              plot_by_regions(self.dates[recovered_date])
+     def plot_number_of_cases(self):
+          for recovered_date in self.dates:
+               plot_by_regions(self.dates[recovered_date])
+          all_dates = list(self.dates.keys())
+          all_dates.sort()
+         self.map.get_root().html.add_child(folium.Element(legend_html_template.format(date_first=all_dates[0], date_last=all_dates[-1])))
 
 
                              
                         
 
 
-legend_html =   '''
-                <div style="position: fixed; 
-                            bottom: 500px; left: 50px; width: 350px; height: 75px; 
-                            border:2px solid grey; z-index:9999; font-size:14px;
-                            ">&nbsp; Donnees OpenCOVID19<br>
-                              &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i><br>
-                              &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i>
-                </div>
-                '''
                 
 
 
@@ -221,7 +224,6 @@ legend_html =   '''
             
 CODA=CovidData()
 CODA.plot_number_of_cases()
-CODA.map.get_root().html.add_child(folium.Element(legend_html))
 #CODA.map.save("./mytestREGION.html")
 
 app = Flask(__name__)
