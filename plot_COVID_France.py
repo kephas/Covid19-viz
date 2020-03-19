@@ -198,7 +198,7 @@ class CovidData(object):
 
     def plot_number_of_cases(self):
          for recovered_date in self.dates:
-              plot_by_regions(self.dates[recovered_date])
+              self.plot_by_regions(self.dates[recovered_date])
 
 
                              
