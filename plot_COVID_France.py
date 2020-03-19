@@ -32,11 +32,11 @@ class CovidData(object):
 
     def __init__(self):
          FR=france_data.FranceData()
-         FR.load_latest_single()
-         self.Cases=FR.load_latest_single()
+         FR.load_latest_consolidated()
+         self.dates=FR.load_latest_consolidated()
 #        url = "https://raw.githubusercontent.com/opencovid19-fr/data/master/agences-regionales-sante/grand-est/2020-03-16.yaml"#open url
 #        testyaml=yaml.safe_load(urllib.request.urlopen(url).read())
-#        self.Cases = {
+#        self.dates = {
 #                      "REG-44": testyaml,
 #                      }
          self.Coordinates = {
@@ -156,44 +156,49 @@ class CovidData(object):
          self.map = folium.Map(location=[46,2],
               tiles = 'Stamen Terrain',
               zoom_start=6)
-        
-    def plot_number_of_cases(self):
-         for region in self.Cases:
-              if self.Cases[region].get('donneesRegionales') != None:
-                   if self.Cases[region]['donneesRegionales'].get('casConfirmes') !=None:
-                        ra=self.Cases[region]['donneesRegionales']['casConfirmes']
-                        nom=self.Cases[region]['donneesRegionales']['nom']
+
+    def plot_by_region(self, regions):
+         for region in regions:
+              if regions[region].get('donneesRegionales') != None:
+                   if regions[region]['donneesRegionales'].get('casConfirmes') !=None:
+                        ra=regions[region]['donneesRegionales']['casConfirmes']
+                        nom=regions[region]['donneesRegionales']['nom']
                         custom_color='orange'
-                        date=self.Cases[region]['date']                                      
-                        if type(self.Cases[region]['date']) is datetime.date:
-                             date=self.Cases[region]['date'].strftime("%Y-%m-%d")
+                        date=regions[region]['date']
+                        if type(regions[region]['date']) is datetime.date:
+                             date=regions[region]['date'].strftime("%Y-%m-%d")
                         folium.Circle(
-                                  location=self.Coordinates[self.Cases[region]['donneesRegionales']['code']],
+                                  location=self.Coordinates[regions[region]['donneesRegionales']['code']],
                                   radius=5000*np.log(ra),
                                   fill=True,
                                   color=custom_color,
                                   fill_color=custom_color,
                                   fill_opacity=0.5
                              ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)      
-              if self.Cases[region].get('donneesDepartementales') != None:
-                   for i, departement in enumerate(self.Cases[region]['donneesDepartementales']):
-                        if self.Cases[region]['donneesDepartementales'][i].get('code') != None:
-                             if self.Coordinates.get(self.Cases[region]['donneesDepartementales'][i]['code']) != None:
-                                      if self.Cases[region]['donneesDepartementales'][i].get('casConfirmes') != None:
-                                           ra=self.Cases[region]['donneesDepartementales'][i]['casConfirmes']
-                                           nom=self.Cases[region]['donneesDepartementales'][i]['nom']
+              if regions[region].get('donneesDepartementales') != None:
+                   for i, departement in enumerate(regions[region]['donneesDepartementales']):
+                        if regions[region]['donneesDepartementales'][i].get('code') != None:
+                             if self.Coordinates.get(regions[region]['donneesDepartementales'][i]['code']) != None:
+                                      if regions[region]['donneesDepartementales'][i].get('casConfirmes') != None:
+                                           ra=regions[region]['donneesDepartementales'][i]['casConfirmes']
+                                           nom=regions[region]['donneesDepartementales'][i]['nom']
                                            custom_color='red'
-                                           date=self.Cases[region]['date']                                      
-                                           if type(self.Cases[region]['date']) is datetime.date:
-                                                date=self.Cases[region]['date'].strftime("%Y-%m-%d")
+                                           date=regions[region]['date']
+                                           if type(regions[region]['date']) is datetime.date:
+                                                date=regions[region]['date'].strftime("%Y-%m-%d")
                                            folium.Circle(
-                                                 location=self.Coordinates[self.Cases[region]['donneesDepartementales'][i]['code']],
+                                                 location=self.Coordinates[regions[region]['donneesDepartementales'][i]['code']],
                                                  radius=5000*np.log(ra),
                                                  fill=True,
                                                  color=custom_color,
                                                  fill_color=custom_color,
                                                  fill_opacity=0.5
                                                  ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
+
+
+    def plot_number_of_dates(self):
+         for recovered_date in self.dates:
+              plot_by_regions(self.dates[recovered_date])
 
 
                              
