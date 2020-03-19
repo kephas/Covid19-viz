@@ -226,10 +226,25 @@ CODA=CovidData()
 CODA.plot_number_of_cases()
 #CODA.map.save("./mytestREGION.html")
 
+page_template = '''<!doctype html>
+
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+
+  <title>Carte de la France du Covid-19</title>
+</head>
+
+<body>
+{map}
+</body>
+</html>
+'''
+
 app = Flask(__name__)
 @app.route("/")
 def display_map():
-     return CODA.map._repr_html_()
+     return page_template.format(map=CODA.map._repr_html_())
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
