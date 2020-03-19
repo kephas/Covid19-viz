@@ -157,7 +157,7 @@ class CovidData(object):
               tiles = 'Stamen Terrain',
               zoom_start=6)
 
-    def plot_by_region(self, regions):
+    def plot_by_regions(self, regions):
          for region in regions:
               if regions[region].get('donneesRegionales') != None:
                    if regions[region]['donneesRegionales'].get('casConfirmes') !=None:
@@ -196,7 +196,7 @@ class CovidData(object):
                                                  ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
 
 
-    def plot_number_of_dates(self):
+    def plot_number_of_cases(self):
          for recovered_date in self.dates:
               plot_by_regions(self.dates[recovered_date])
 
