@@ -22,8 +22,9 @@ import collections
 import datetime
 import numpy as np
 import pandas as pd
-#import branca.colormap as cm
-#colormap =cm.linear.YlOrRd_09.scale(0, 1000)
+import branca.colormap as cm
+colormap =cm.linear.YlOrRd_09.scale(0, 1000)
+
 
 
 
@@ -136,7 +137,7 @@ class CovidData(object):
                   'DEP-46': [44.62416667, 1.604722222],
                   'DEP-48': [44.51722222, 3.500277778],
                   'DEP-50': [49.07944444, -1.3275],
-                  'DEP-53': [49.07944444, -1.3275],
+                  'DEP-53': [48.1333, -0.6833],
                   'DEP-58': [47.11527778, 3.504722222],
                   'DEP-60': [49.41027778, 2.425277778],
                   'DEP-63': [45.72583333, 3.140833333],
@@ -174,28 +175,33 @@ class CovidData(object):
          self.Coordinates=pd.DataFrame.from_dict(self.Departements, orient='index')
          self.Coordinates['maille_code']=self.Coordinates.index
          
-         self.datachunk=None
-
          self.map = folium.Map(location=[46,2],
               tiles = 'Stamen Terrain',
               zoom_start=6)
-
+         
+         self.merged_data_last = None
+         self.merged_data_penultimate = None
 
     def merge_data_and_coordinates(self):
          self.merged_data=self.Confirmed_Cases.merge(self.Coordinates, left_on='maille_code', right_on='maille_code')
 
-    def select_latest_available_date(self):
-         self.merged_data=self.merged_data.sort_values('date').groupby('maille_code').tail(1)
-         
+        
     def drop_rows_for_which_confirmed_cases_are_missing(self):
          self.merged_data=self.merged_data.dropna(subset=['cas_confirmes'])
-#        self.merged_data=self.merged_data.fillna(value=0)
-#         self.merged_data.fillna(value=0, inplace=True)
-#    def select_date(self,data,selected_date):
-#         data=data[data['date']==my_date]
+
+    def select_last_date(self):
+         self.merged_data_last=self.merged_data.sort_values('date').groupby('maille_code').tail(1)
+
+    def select_penultimate_date(self):
+         merged_data_penultimate_temp=self.merged_data.sort_values('date').groupby('maille_code').tail(2)
+         self.merged_data_penultimate=merged_data_penultimate_temp.sort_values('date').groupby('maille_code').head(1)
+
+    def compute_change_in_cases(self):
+          self.merged_data_diff=self.merged_data_last.merge(self.merged_data_penultimate, left_on='maille_code', right_on='maille_code')
+          self.merged_data_diff['difference']=self.merged_data_diff['cas_confirmes_x']-self.merged_data_diff['cas_confirmes_y']
+          self.merged_data_diff.to_csv('difftest.csv')
 
     def plot_departements(self,data,custom_color):
-
          radius = data['cas_confirmes'].values.astype('float')
          latitude = data[0].values.astype('float')
          longitude = data[1].values.astype('float')
@@ -207,29 +213,49 @@ class CovidData(object):
                   radius=max(15000, 5000*np.log(ra)),
                   fill=True,
                   color=custom_color,
-#                  fill_color=colormap(ra),
-                  fill_color=custom_color,
+                  fill_color=colormap(ra),
                   fill_opacity=0.5
               ).add_child(folium.Popup(no.replace('ô','o').replace('é','e').replace('è','e').replace('à','a')+': '+str(ra)[:-2]+ ' cas confirmes au '+str(ld))).add_to(self.map)
-              
+
+    def plot_departements_diff(self,data,custom_color):
+         radius = data['cas_confirmes_x'].values.astype('float')
+         latitude = data['0_x'].values.astype('float')
+         longitude = data['1_y'].values.astype('float')
+         nom = data['maille_nom_x'].values.astype('str')   
+         latest_date = data['date_x'].values.astype('str')
+         penultimate_date = data['date_y'].values.astype('str')         
+         difference = data['difference'].values.astype('str') 
+         for la,lo,ra,no,di,ld,pd in zip(latitude,longitude,radius,nom,difference,latest_date,penultimate_date):
+              folium.Circle(
+                  location=[la,lo],
+                  radius=max(15000, 5000*np.log(ra)),
+                  fill=True,
+                  color=custom_color,
+                  fill_color=colormap(ra),
+                  fill_opacity=0.5
+              ).add_child(folium.Popup(no.replace('ô','o').replace('é','e').replace('è','e').replace('à','a')+': '+str(ra)[:-2]+ ' cas confirmes au '+str(ld)+'. +'+str(di)[:-2]+' cas depuis le '+str(pd)+'.')).add_to(self.map)
+               
               
 
             
 CODA=CovidData()
 CODA.merge_data_and_coordinates()
 CODA.drop_rows_for_which_confirmed_cases_are_missing()
-CODA.select_latest_available_date()
-CODA.plot_departements(CODA.merged_data,'grey')
+CODA.select_penultimate_date()
+CODA.select_last_date()
+CODA.compute_change_in_cases()
+#CODA.plot_departements(CODA.merged_data_last,'grey')
+CODA.plot_departements_diff(CODA.merged_data_diff,'grey')
 
-#colormap.caption = 'Nombre de cas de COVID-19 par departement'
-#CODA.map.add_child(colormap)
+colormap.caption = 'Nombre de cas de COVID-19 par departement'
+CODA.map.add_child(colormap)
 
-#CODA.map.save("./mytestPANDAS.html")
+CODA.map.save("./mytestPANDAS.html")
 
-app = Flask(__name__)
-@app.route("/")
-def display_map():
-     return CODA.map._repr_html_()
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
+#app = Flask(__name__)
+#@app.route("/")
+#def display_map():
+#     return CODA.map._repr_html_()
+#
+#if __name__ == "__main__":
+#    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
