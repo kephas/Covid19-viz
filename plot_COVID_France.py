@@ -22,7 +22,12 @@ import collections
 import datetime
 import numpy as np
 import pandas as pd
+import branca.colormap as cm
+colormap =cm.linear.YlOrRd_09.scale(0, 1000)
 #import france_data
+
+
+
 
 
 
@@ -53,20 +58,7 @@ class CovidData(object):
 
     def __init__(self):
          self.Confirmed_Cases = pd.read_csv('https://raw.githubusercontent.com/opencovid19-fr/data/master/dist/chiffres-cles.csv')
-         self.Coordinates_Dictionary = {
-                  'REG-52': [47.4667, -0.7833],
-                  'REG-27': [47.24, 4.818],
-                  'REG-32': [49.9667, 2.7833],      
-                  'REG-84': [45.5167, 4.5333],
-                  'REG-76': [43.7073, 2.1385],
-                  'REG-53': [48.2, -2.85],
-                  'REG-24': [47.5, 1.6833],
-                  'REG-94': [42.1667, 9.1667],
-                  'REG-44': [48.6833, 5.6167],
-                  'REG-11': [48.7, 2.5],
-                  'REG-28': [49.1333, 0.1],
-                  'REG-75': [45.2, 0.1833],
-                  'REG-93': [43.9333, 6.0333],                
+         self.Departements = {                
                   'DEP-29': [48.26111111, -4.058888889], 
                   'DEP-22': [48.44111111, -2.864166667], 
                   'DEP-56': [47.84638889, -2.81], 
@@ -161,46 +153,63 @@ class CovidData(object):
                   'DEP-89': [47.83972222, 3.564444444],
                   'DEP-90': [47.63166667, 6.928611111],
                   'DEP-95': [49.08277778, 2.131111111],
-                  'DEP-2A': [42.39416667, 9.206388889],
-                  'DEP-2B': [41.86361111, 8.988055556]
-                  }      
-         self.Coordinates=pd.DataFrame.from_dict(self.Coordinates_Dictionary, orient='index')
+                  'DEP-2B': [42.39416667, 9.206388889],
+                  'DEP-2A': [41.86361111, 8.988055556]
+                  } 
+         
+         self.Regions={'REG-52': [47.4667, -0.7833],
+                  'REG-27': [47.24, 4.818],
+                  'REG-32': [49.9667, 2.7833],      
+                  'REG-84': [45.5167, 4.5333],
+                  'REG-76': [43.7073, 2.1385],
+                  'REG-53': [48.2, -2.85],
+                  'REG-24': [47.5, 1.6833],
+                  'REG-94': [42.1667, 9.1667],
+                  'REG-44': [48.6833, 5.6167],
+                  'REG-11': [48.7, 2.5],
+                  'REG-28': [49.1333, 0.1],
+                  'REG-75': [45.2, 0.1833],
+                  'REG-93': [43.9333, 6.0333]
+                  }
+         
+         self.Coordinates=pd.DataFrame.from_dict(self.Departements, orient='index')
          self.Coordinates['maille_code']=self.Coordinates.index
          
          self.datachunk=None
-         self.merged_datachunk=None
-         
+
          self.map = folium.Map(location=[46,2],
               tiles = 'Stamen Terrain',
               zoom_start=6)
 
 
-#    def merge_data_and_coordinates(self,my_date):
-#         self.datachunk=self.Confirmed_Cases[self.Confirmed_Cases['date']==my_date]
-#         self.merged_datachunk=self.datachunk.merge(self.Coordinates, left_on='maille_code', right_on='maille_code')
-#         return 
-
-    def merge_data_and_coordinates(self,my_date):
-
+    def merge_data_and_coordinates(self):
          self.merged_data=self.Confirmed_Cases.merge(self.Coordinates, left_on='maille_code', right_on='maille_code')
-         self.datachunk=self.merged_data[self.merged_data['date']==my_date]
-         return 
+
+    def select_latest_available_date(self):
+         self.merged_data=self.merged_data.sort_values('date').groupby('maille_code').tail(1)
+         pdb.set_trace()
+#        self.merged_data=self.merged_data.fillna(value=0)
+         self.merged_data.fillna(value=0, inplace=True)
+#    def select_date(self,data,selected_date):
+#         data=data[data['date']==my_date]
 
     def plot_departements(self,data,custom_color):
+
          radius = data['cas_confirmes'].values.astype('float')
          latitude = data[0].values.astype('float')
          longitude = data[1].values.astype('float')
-         number_of_cases = data['cas_confirmes'].values.astype(str)  
-         name = data['maille_nom'].values.astype(str)
-         for la,lo,ra,nc in zip(latitude,longitude,radius,number_of_cases):
+         nom = data['maille_nom'].values.astype('str')   
+         latest_date = data['date'].values.astype('str')
+         for la,lo,ra,no,ld in zip(latitude,longitude,radius,nom,latest_date):
               folium.Circle(
                   location=[la,lo],
-                  radius=ra*10,
+                  radius=25000,
+                  no = nom,
                   fill=True,
                   color=custom_color,
-                  fill_color=custom_color,
+                  fill_color=colormap(ra),
                   fill_opacity=0.5
-              ).add_child(folium.Popup(number_of_cases)).add_to(self.map)
+              ).add_child(folium.Popup(no.replace('ô','o').replace('é','e').replace('è','e').replace('à','a')+': '+str(ra)[:-2]+ ' cas confirmes au '+str(ld))).add_to(self.map)
               
               
 
@@ -215,8 +224,13 @@ class CovidData(object):
 
             
 CODA=CovidData()
-CODA.merge_data_and_coordinates('2020-03-19')
-CODA.plot_departements(CODA.datachunk,'red')
+CODA.merge_data_and_coordinates()
+CODA.select_latest_available_date()
+CODA.plot_departements(CODA.merged_data,'grey')
+
+colormap.caption = 'Nombre de cas de COVID-19 par departement'
+CODA.map.add_child(colormap)
+
 CODA.map.save("./mytestPANDAS.html")
 
 #app = Flask(__name__)
