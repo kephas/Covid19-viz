@@ -187,9 +187,11 @@ class CovidData(object):
 
     def select_latest_available_date(self):
          self.merged_data=self.merged_data.sort_values('date').groupby('maille_code').tail(1)
-         pdb.set_trace()
+         
+    def drop_rows_for_which_confirmed_cases_are_missing(self):
+         self.merged_data=self.merged_data.dropna(subset=['cas_confirmes'])
 #        self.merged_data=self.merged_data.fillna(value=0)
-         self.merged_data.fillna(value=0, inplace=True)
+#         self.merged_data.fillna(value=0, inplace=True)
 #    def select_date(self,data,selected_date):
 #         data=data[data['date']==my_date]
 
@@ -203,7 +205,7 @@ class CovidData(object):
          for la,lo,ra,no,ld in zip(latitude,longitude,radius,nom,latest_date):
               folium.Circle(
                   location=[la,lo],
-                  radius=25000,
+                  radius=max(15000, 5000*np.log(ra)),
                   no = nom,
                   fill=True,
                   color=custom_color,
@@ -213,30 +215,22 @@ class CovidData(object):
               
               
 
-
-                             
-                        
-
-
-                
-
-
-
             
 CODA=CovidData()
 CODA.merge_data_and_coordinates()
+CODA.drop_rows_for_which_confirmed_cases_are_missing()
 CODA.select_latest_available_date()
 CODA.plot_departements(CODA.merged_data,'grey')
 
 colormap.caption = 'Nombre de cas de COVID-19 par departement'
 CODA.map.add_child(colormap)
 
-CODA.map.save("./mytestPANDAS.html")
+#CODA.map.save("./mytestPANDAS.html")
 
-#app = Flask(__name__)
-#@app.route("/")
-#def display_map():
-#     return CODA.map._repr_html_()
-#
-#if __name__ == "__main__":
-#    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
+app = Flask(__name__)
+@app.route("/")
+def display_map():
+     return CODA.map._repr_html_()
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
