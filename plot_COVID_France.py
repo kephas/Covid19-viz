@@ -31,15 +31,15 @@ colormap =cm.linear.YlOrRd_09.scale(0, 1000)
 
 
 
-legend_html_template = '''
-<div style="position: fixed;
-     bottom: 500px; left: 50px; width: 350px; height: 75px;
-     border:2px solid grey; z-index:9999; font-size:14px;
-     ">&nbsp; Donnees OpenCOVID19 du {date_first} au {date_last}<br>
-     &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i><br>
-     &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i>
-</div>
-'''
+#legend_html_template = '''
+#<div style="position: fixed;
+#     bottom: 500px; left: 50px; width: 350px; height: 75px;
+#     border:2px solid grey; z-index:9999; font-size:14px;
+#     ">&nbsp; Donnees OpenCOVID19 du {date_first} au {date_last}<br>
+#     &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i><br>
+#     &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i>
+#</div>
+#'''
 #url='https://raw.githubusercontent.com/opencovid19-fr/data/master/dist/chiffres-cles.csv'
 #
 #
@@ -250,12 +250,12 @@ CODA.plot_departements_diff(CODA.merged_data_diff,'grey')
 colormap.caption = 'Nombre de cas de COVID-19 par departement'
 CODA.map.add_child(colormap)
 
-CODA.map.save("./mytestPANDAS.html")
+#CODA.map.save("./mytestPANDAS.html")
 
-#app = Flask(__name__)
-#@app.route("/")
-#def display_map():
-#     return CODA.map._repr_html_()
-#
-#if __name__ == "__main__":
-#    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
+app = Flask(__name__)
+@app.route("/")
+def display_map():
+     return CODA.map._repr_html_()
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
