@@ -198,7 +198,7 @@ class CovidData(object):
          latest_date = data['date_x'].values.astype('str')
          penultimate_date = data['date_y'].values.astype('str')         
          difference = data['difference'].values.astype('str') 
-         for la,lo,ra,no,di,ld,pd in zip(latitude[:10],longitude[:10],radius[:10],nom[:10],difference[:10],latest_date[:10],penultimate_date[:10]):
+         for la,lo,ra,no,di,ld,pd in zip(latitude[:50],longitude[:50],radius[:50],nom[:50],difference[:50],latest_date[:50],penultimate_date[:50]):
               folium.Circle(
                   location=[la,lo],
                   radius=max(15000, 5000*np.log(ra)),
