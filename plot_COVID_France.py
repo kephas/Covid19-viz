@@ -22,9 +22,8 @@ import collections
 import datetime
 import numpy as np
 import pandas as pd
-import branca.colormap as cm
-colormap =cm.linear.YlOrRd_09.scale(0, 1000)
-#import france_data
+#import branca.colormap as cm
+#colormap =cm.linear.YlOrRd_09.scale(0, 1000)
 
 
 
@@ -208,7 +207,8 @@ class CovidData(object):
                   radius=max(15000, 5000*np.log(ra)),
                   fill=True,
                   color=custom_color,
-                  fill_color=colormap(ra),
+#                  fill_color=colormap(ra),
+                  fill_color=custom_color,
                   fill_opacity=0.5
               ).add_child(folium.Popup(no.replace('ô','o').replace('é','e').replace('è','e').replace('à','a')+': '+str(ra)[:-2]+ ' cas confirmes au '+str(ld))).add_to(self.map)
               
@@ -221,8 +221,8 @@ CODA.drop_rows_for_which_confirmed_cases_are_missing()
 CODA.select_latest_available_date()
 CODA.plot_departements(CODA.merged_data,'grey')
 
-colormap.caption = 'Nombre de cas de COVID-19 par departement'
-CODA.map.add_child(colormap)
+#colormap.caption = 'Nombre de cas de COVID-19 par departement'
+#CODA.map.add_child(colormap)
 
 #CODA.map.save("./mytestPANDAS.html")
 
