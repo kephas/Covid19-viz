@@ -28,7 +28,7 @@ import france_data
 
 legend_html_template = '''
 <div style="position: fixed;
-     padding: .5em; top: 6em; left: 6em; width: 30em; height: 5.5em;
+     padding: .5em; top: 10px; left: 60px; width: 30em; height: 5.5em;
      border:2px solid grey; z-index:9999; font-size:14px; background: #eee;
      ">&nbsp; Donnees OpenCOVID19 du {date_first} au {date_last}<br>
      &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i><br>
