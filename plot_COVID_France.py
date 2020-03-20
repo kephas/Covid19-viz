@@ -198,7 +198,7 @@ class CovidData(object):
          latest_date = data['date_x'].values.astype('str')
          penultimate_date = data['date_y'].values.astype('str')         
          difference = data['difference'].values.astype('str') 
-         for la,lo,ra,no,di,ld,pd in zip(latitude,longitude,radius,nom,difference,latest_date,penultimate_date):
+         for la,lo,ra,no,di,ld,pd in zip(latitude[:10],longitude[:10],radius[:10],nom[:10],difference[:10],latest_date[:10],penultimate_date[:10]):
               folium.Circle(
                   location=[la,lo],
                   radius=max(15000, 5000*np.log(ra)),
@@ -216,7 +216,7 @@ CODA.drop_rows_for_which_confirmed_cases_are_missing()
 CODA.select_penultimate_date()
 CODA.select_last_date()
 CODA.compute_change_in_cases()
-#CODA.plot_departements_diff(CODA.merged_data_diff,'grey')
+CODA.plot_departements_diff(CODA.merged_data_diff,'grey')
 
 #colormap.caption = 'Nombre de cas de COVID-19 par departement'
 #CODA.map.add_child(colormap)
