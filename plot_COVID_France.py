@@ -183,7 +183,7 @@ class CovidData(object):
                                   color=custom_color,
                                   fill_color=custom_color,
                                   fill_opacity=0.5
-                             ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)      
+                             ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e').replace('ô', 'o').replace('’', "'")+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)      
               if regions[region].get('donneesDepartementales') != None:
                    for i, departement in enumerate(regions[region]['donneesDepartementales']):
                         if regions[region]['donneesDepartementales'][i].get('code') != None:
@@ -202,7 +202,7 @@ class CovidData(object):
                                                  color=custom_color,
                                                  fill_color=custom_color,
                                                  fill_opacity=0.5
-                                                 ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
+                                                 ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e').replace('ô', 'o').replace('’', "'")+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
 
 
     def plot_number_of_cases(self):
