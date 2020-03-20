@@ -22,7 +22,7 @@ import collections
 import datetime
 import numpy as np
 import pandas as pd
-import branca.colormap as cm
+#import branca.colormap as cm
 #colormap =cm.linear.YlOrRd_09.scale(0, 1000)
 
 
@@ -232,7 +232,7 @@ class CovidData(object):
                   radius=max(15000, 5000*np.log(ra)),
                   fill=True,
                   color=custom_color,
-                  fill_color=colormap(ra),
+#                  fill_color=colormap(ra),
                   fill_opacity=0.5
               ).add_child(folium.Popup(no.replace('ô','o').replace('é','e').replace('è','e').replace('à','a')+': '+str(ra)[:-2]+ ' cas confirmes au '+str(ld)+'. +'+str(di)[:-2]+' cas depuis le '+str(pd)+'.')).add_to(self.map)
                
