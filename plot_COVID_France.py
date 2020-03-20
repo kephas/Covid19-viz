@@ -21,8 +21,8 @@ import numpy as np
 import collections
 import datetime
 import numpy as np
-
-import france_data
+import pandas as pd
+#import france_data
 
 
 
@@ -35,20 +35,25 @@ legend_html_template = '''
      &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i>
 </div>
 '''
+#url='https://raw.githubusercontent.com/opencovid19-fr/data/master/dist/chiffres-cles.csv'
+#
+#
+#class CovidDF:
+#    def __init__(self, url):
+#        self.url = url
+#        self.raw = None
+#
+#    def reload(self, date):
+#        self.raw = pd.read_csv(self.url)
+
+
 
 
 class CovidData(object):
 
     def __init__(self):
-         FR=france_data.FranceData()
-         FR.load_latest_consolidated()
-         self.dates=FR.load_latest_consolidated()
-#        url = "https://raw.githubusercontent.com/opencovid19-fr/data/master/agences-regionales-sante/grand-est/2020-03-16.yaml"#open url
-#        testyaml=yaml.safe_load(urllib.request.urlopen(url).read())
-#        self.dates = {
-#                      "REG-44": testyaml,
-#                      }
-         self.Coordinates = {
+         self.Confirmed_Cases = pd.read_csv('https://raw.githubusercontent.com/opencovid19-fr/data/master/dist/chiffres-cles.csv')
+         self.Coordinates_Dictionary = {
                   'REG-52': [47.4667, -0.7833],
                   'REG-27': [47.24, 4.818],
                   'REG-32': [49.9667, 2.7833],      
@@ -158,59 +163,46 @@ class CovidData(object):
                   'DEP-95': [49.08277778, 2.131111111],
                   'DEP-2A': [42.39416667, 9.206388889],
                   'DEP-2B': [41.86361111, 8.988055556]
-                  }
-        
-
-        
+                  }      
+         self.Coordinates=pd.DataFrame.from_dict(self.Coordinates_Dictionary, orient='index')
+         self.Coordinates['maille_code']=self.Coordinates.index
+         
+         self.datachunk=None
+         self.merged_datachunk=None
+         
          self.map = folium.Map(location=[46,2],
               tiles = 'Stamen Terrain',
               zoom_start=6)
 
-    def plot_by_regions(self, regions):
-         for region in regions:
-              if regions[region].get('donneesRegionales') != None:
-                   if regions[region]['donneesRegionales'].get('casConfirmes') !=None:
-                        ra=regions[region]['donneesRegionales']['casConfirmes']
-                        nom=regions[region]['donneesRegionales']['nom']
-                        custom_color='orange'
-                        date=regions[region]['date']
-                        if type(regions[region]['date']) is datetime.date:
-                             date=regions[region]['date'].strftime("%Y-%m-%d")
-                        folium.Circle(
-                                  location=self.Coordinates[regions[region]['donneesRegionales']['code']],
-                                  radius=5000*np.log(ra),
-                                  fill=True,
-                                  color=custom_color,
-                                  fill_color=custom_color,
-                                  fill_opacity=0.5
-                             ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)      
-              if regions[region].get('donneesDepartementales') != None:
-                   for i, departement in enumerate(regions[region]['donneesDepartementales']):
-                        if regions[region]['donneesDepartementales'][i].get('code') != None:
-                             if self.Coordinates.get(regions[region]['donneesDepartementales'][i]['code']) != None:
-                                      if regions[region]['donneesDepartementales'][i].get('casConfirmes') != None:
-                                           ra=regions[region]['donneesDepartementales'][i]['casConfirmes']
-                                           nom=regions[region]['donneesDepartementales'][i]['nom']
-                                           custom_color='red'
-                                           date=regions[region]['date']
-                                           if type(regions[region]['date']) is datetime.date:
-                                                date=regions[region]['date'].strftime("%Y-%m-%d")
-                                           folium.Circle(
-                                                 location=self.Coordinates[regions[region]['donneesDepartementales'][i]['code']],
-                                                 radius=5000*np.log(ra),
-                                                 fill=True,
-                                                 color=custom_color,
-                                                 fill_color=custom_color,
-                                                 fill_opacity=0.5
-                                                 ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
 
+#    def merge_data_and_coordinates(self,my_date):
+#         self.datachunk=self.Confirmed_Cases[self.Confirmed_Cases['date']==my_date]
+#         self.merged_datachunk=self.datachunk.merge(self.Coordinates, left_on='maille_code', right_on='maille_code')
+#         return 
 
-    def plot_number_of_cases(self):
-         for recovered_date in self.dates:
-              self.plot_by_regions(self.dates[recovered_date])
-         all_dates = list(self.dates.keys())
-         all_dates.sort()
-         self.map.get_root().html.add_child(folium.Element(legend_html_template.format(date_first=all_dates[0], date_last=all_dates[-1])))
+    def merge_data_and_coordinates(self,my_date):
+
+         self.merged_data=self.Confirmed_Cases.merge(self.Coordinates, left_on='maille_code', right_on='maille_code')
+         self.datachunk=self.merged_data[self.merged_data['date']==my_date]
+         return 
+
+    def plot_departements(self,data,custom_color):
+         radius = data['cas_confirmes'].values.astype('float')
+         latitude = data[0].values.astype('float')
+         longitude = data[1].values.astype('float')
+         number_of_cases = data['cas_confirmes'].values.astype(str)  
+         name = data['maille_nom'].values.astype(str)
+         for la,lo,ra,nc in zip(latitude,longitude,radius,number_of_cases):
+              folium.Circle(
+                  location=[la,lo],
+                  radius=ra*10,
+                  fill=True,
+                  color=custom_color,
+                  fill_color=custom_color,
+                  fill_opacity=0.5
+              ).add_child(folium.Popup(number_of_cases)).add_to(self.map)
+              
+              
 
 
                              
@@ -223,13 +215,14 @@ class CovidData(object):
 
             
 CODA=CovidData()
-CODA.plot_number_of_cases()
-#CODA.map.save("./mytestREGION.html")
+CODA.merge_data_and_coordinates('2020-03-19')
+CODA.plot_departements(CODA.datachunk,'red')
+CODA.map.save("./mytestPANDAS.html")
 
-app = Flask(__name__)
-@app.route("/")
-def display_map():
-     return CODA.map._repr_html_()
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
+#app = Flask(__name__)
+#@app.route("/")
+#def display_map():
+#     return CODA.map._repr_html_()
+#
+#if __name__ == "__main__":
+#    app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
