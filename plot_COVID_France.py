@@ -206,7 +206,6 @@ class CovidData(object):
               folium.Circle(
                   location=[la,lo],
                   radius=max(15000, 5000*np.log(ra)),
-                  no = nom,
                   fill=True,
                   color=custom_color,
                   fill_color=colormap(ra),
