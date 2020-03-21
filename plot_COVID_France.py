@@ -27,6 +27,19 @@ import branca.colormap as cm
 colormap =cm.linear.YlOrRd_09.scale(0, 500)
 
      
+legend_html = '''
+<div style="position: fixed;
+     bottom: 50px; left: 50px; width: 500px; height: 115px;
+     background: white; border:2px solid grey; z-index:9999; font-size:14px;
+     "> &nbsp; Nombre de cas de COVID-19 par departement pour la France metropolitaine<br>
+     &nbsp; Donnees tirees de https://github.com/opencovid19-fr/data  <br>
+     &nbsp; Carte interactive creee par: &nbsp;</i><br>
+     &nbsp; - Sheldon Warden: sheldon.warden@protonmail.com &nbsp;</i><br>
+     &nbsp; - Pierre Thierry: pierre@nothos.net &nbsp; </i>
+</div>
+'''
+
+
 class CovidData(object):
 
     def __init__(self):
@@ -174,23 +187,6 @@ class CovidData(object):
           self.merged_data_diff['difference']=self.merged_data_diff['cas_confirmes_x']-self.merged_data_diff['cas_confirmes_y']
           self.merged_data_diff.to_csv('difftest.csv')
 
-#    def plot_departements(self,data,custom_color):
-#         radius = data['cas_confirmes'].values.astype('float')
-#         latitude = data[0].values.astype('float')
-#         longitude = data[1].values.astype('float')
-#         nom = data['maille_nom'].values.astype('str')   
-#         latest_date = data['date'].values.astype('str')
-#         for la,lo,ra,no,ld in zip(latitude,longitude,radius,nom,latest_date):
-#              folium.Circle(
-#                  location=[la,lo],
-#                  radius=max(15000, 5000*np.log(ra)),
-#                  fill=True,
-#                  color=custom_color,
-##                  fill_color=colormap(ra),
-#                  fill_color=custom_color,
-#                  fill_opacity=0.5
-#              ).add_child(folium.Popup(no.replace('ô','o').replace('é','e').replace('è','e').replace('à','a')+': '+str(ra)[:-2]+ ' cas confirmes au '+str(ld))).add_to(self.map)
-
     def plot_departements(self,data,custom_color):
          radius = data['cas_confirmes_x'].values.astype('float')
          latitude = data['0_x'].values.astype('float')
@@ -241,6 +237,7 @@ CODA.select_last_date()
 CODA.compute_change_in_cases()
 CODA.plot_departements(CODA.merged_data_diff,'grey')
 
+CODA.map.get_root().html.add_child(folium.Element(legend_html))
 colormap.caption = 'Nombre de cas de COVID-19 par departement (Source: opencovid19-fr)'
 CODA.map.add_child(colormap)
 
