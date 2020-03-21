@@ -209,16 +209,16 @@ class CovidData(object):
                        color='white',
                        fill_color='white',
                        fill_opacity=0.5
-                   ).add_child(folium.Popup(label).add_to(self.map)
+                   ).add_child(folium.Popup(label)).add_to(self.map)
               elif ra<500:
                    folium.Circle(
                        location=[la,lo],
                        radius=5000*np.log(ra),
                        fill=True,
-                       color='grey',
+                       color='orange',
                        fill_color=colormap(ra),
-                       fill_opacity=0.7
-                   ).add_child(folium.Popup(label).add_to(self.map)
+                       fill_opacity=0.8
+                   ).add_child(folium.Popup(label)).add_to(self.map)
               else:
                   folium.Circle(
                        location=[la,lo],
@@ -226,7 +226,7 @@ class CovidData(object):
                        fill=True,
                        color='red',
                        fill_color='red',
-                       fill_opacity=0.9
+                       fill_opacity=0.95
                    ).add_child(folium.Popup(label).add_to(self.map)
 
                
