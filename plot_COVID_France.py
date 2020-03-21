@@ -200,6 +200,7 @@ class CovidData(object):
          penultimate_date = data['date_y'].values.astype('str')         
          difference = data['difference'].values.astype('str')
          for la,lo,ra,no,di,ld,pd in zip(latitude,longitude,radius,nom,difference,latest_date,penultimate_date):
+              label=str(ra)[:-2]+ ' cas confirmes au '+str(ld)+'. +'+str(di)[:-2]+' cas depuis le '+str(pd)+'.'
               folium.Circle(
                   location=[la,lo],
                   radius=max(15000, 5000*np.log(ra)),
@@ -207,7 +208,7 @@ class CovidData(object):
                   color=custom_color,
 #                  fill_color=colormap(ra),
                   fill_opacity=0.5
-              ).add_child(no.folium.Popup(str(ra)[:-2]+ ' cas confirmes au '+str(ld)+'. +'+str(di)[:-2]+' cas depuis le '+str(pd)+'.')).add_to(self.map)
+              ).add_child(no.folium.Popup(label)).add_to(self.map)
 
 #         for la,lo,ra,no,di,ld,pd in zip(latitude[:50],longitude[:50],radius[:50],nom[:50],difference[:50],latest_date[:50],penultimate_date[:50]):
 #              folium.Circle(
