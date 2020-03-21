@@ -226,8 +226,8 @@ class CovidData(object):
                        fill=True,
                        color='red',
                        fill_color='red',
-                       fill_opacity=0.95
-                   ).add_child(folium.Popup(label).add_to(self.map)
+                       fill_opacity=1
+                   ).add_child(folium.Popup(label)).add_to(self.map)
 
                
              
@@ -240,7 +240,7 @@ CODA.select_last_date()
 CODA.compute_change_in_cases()
 CODA.plot_departements(CODA.merged_data_diff,'grey')
 
-colormap.caption = 'Nombre de cas de COVID-19 par departement'
+colormap.caption = 'Nombre de cas de COVID-19 par departement (Source: opencovid19-fr)'
 CODA.map.add_child(colormap)
 
 #CODA.map.save("./test_map.html")
