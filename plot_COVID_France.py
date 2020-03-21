@@ -200,7 +200,7 @@ class CovidData(object):
          penultimate_date = data['date_y'].values.astype('str')         
          difference = data['difference'].values.astype('str')
          for la,lo,ra,no,di,ld,pd in zip(latitude,longitude,radius,nom,difference,latest_date,penultimate_date):
-              label=unidecode.unidecode(no)+str(ra)[:-2]+ ' cas confirmes au '+str(ld)+'. +'+str(di)[:-2]+' cas depuis le '+str(pd)+'.'
+              label=str(unidecode.unidecode(no))+str(ra)[:-2]+ ' cas confirmes au '+str(ld)+'. +'+str(di)[:-2]+' cas depuis le '+str(pd)+'.'
               folium.Circle(
                   location=[la,lo],
                   radius=max(15000, 5000*np.log(ra)),
