@@ -23,8 +23,8 @@ import datetime
 import numpy as np
 import pandas as pd
 import unidecode
-#import branca.colormap as cm
-#colormap =cm.linear.YlOrRd_09.scale(0, 1000)
+import branca.colormap as cm
+colormap =cm.linear.YlOrRd_09.scale(0, 1000)
 
      
 class CovidData(object):
@@ -174,24 +174,24 @@ class CovidData(object):
           self.merged_data_diff['difference']=self.merged_data_diff['cas_confirmes_x']-self.merged_data_diff['cas_confirmes_y']
           self.merged_data_diff.to_csv('difftest.csv')
 
-    def plot_departements(self,data,custom_color):
-         radius = data['cas_confirmes'].values.astype('float')
-         latitude = data[0].values.astype('float')
-         longitude = data[1].values.astype('float')
-         nom = data['maille_nom'].values.astype('str')   
-         latest_date = data['date'].values.astype('str')
-         for la,lo,ra,no,ld in zip(latitude,longitude,radius,nom,latest_date):
-              folium.Circle(
-                  location=[la,lo],
-                  radius=max(15000, 5000*np.log(ra)),
-                  fill=True,
-                  color=custom_color,
-#                  fill_color=colormap(ra),
-                  fill_color=custom_color,
-                  fill_opacity=0.5
-              ).add_child(folium.Popup(no.replace('ô','o').replace('é','e').replace('è','e').replace('à','a')+': '+str(ra)[:-2]+ ' cas confirmes au '+str(ld))).add_to(self.map)
+#    def plot_departements(self,data,custom_color):
+#         radius = data['cas_confirmes'].values.astype('float')
+#         latitude = data[0].values.astype('float')
+#         longitude = data[1].values.astype('float')
+#         nom = data['maille_nom'].values.astype('str')   
+#         latest_date = data['date'].values.astype('str')
+#         for la,lo,ra,no,ld in zip(latitude,longitude,radius,nom,latest_date):
+#              folium.Circle(
+#                  location=[la,lo],
+#                  radius=max(15000, 5000*np.log(ra)),
+#                  fill=True,
+#                  color=custom_color,
+##                  fill_color=colormap(ra),
+#                  fill_color=custom_color,
+#                  fill_opacity=0.5
+#              ).add_child(folium.Popup(no.replace('ô','o').replace('é','e').replace('è','e').replace('à','a')+': '+str(ra)[:-2]+ ' cas confirmes au '+str(ld))).add_to(self.map)
 
-    def plot_departements_diff(self,data,custom_color):
+    def plot_departements(self,data,custom_color):
          radius = data['cas_confirmes_x'].values.astype('float')
          latitude = data['0_x'].values.astype('float')
          longitude = data['1_y'].values.astype('float')
@@ -200,7 +200,7 @@ class CovidData(object):
          penultimate_date = data['date_y'].values.astype('str')         
          difference = data['difference'].values.astype('str')
          for la,lo,ra,no,di,ld,pd in zip(latitude,longitude,radius,nom,difference,latest_date,penultimate_date):
-              label=unidecode.unidecode(no.replace("'","-"))+str(ra)[:-2]+ ' cas confirmes au '+str(ld)+'. +'+str(di)[:-2]+' cas depuis le '+str(pd)+'.'
+              label=unidecode.unidecode(no.replace("'","-"))+': '+str(ra)[:-2]+ ' cas confirmes au '+str(ld)+'. +'+str(di)[:-2]+' cas depuis le '+str(pd)+'.'
               folium.Circle(
                   location=[la,lo],
                   radius=max(15000, 5000*np.log(ra)),
@@ -228,10 +228,10 @@ CODA.drop_rows_for_which_confirmed_cases_are_missing()
 CODA.select_penultimate_date()
 CODA.select_last_date()
 CODA.compute_change_in_cases()
-CODA.plot_departements_diff(CODA.merged_data_diff,'grey')
+CODA.plot_departements(CODA.merged_data_diff,'grey')
 
-#colormap.caption = 'Nombre de cas de COVID-19 par departement'
-#CODA.map.add_child(colormap)
+colormap.caption = 'Nombre de cas de COVID-19 par departement'
+CODA.map.add_child(colormap)
 
 #CODA.map.save("./test_map.html")
 
