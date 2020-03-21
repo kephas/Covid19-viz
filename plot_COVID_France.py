@@ -206,6 +206,7 @@ class CovidData(object):
                        location=[la,lo],
                        radius=17000,
                        fill=True,
+                       opacity = 0.5,
                        color='white',
                        fill_color='white',
                        fill_opacity=0.5
