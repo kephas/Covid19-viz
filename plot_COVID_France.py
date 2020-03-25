@@ -21,18 +21,21 @@ import numpy as np
 import collections
 import datetime
 import numpy as np
+import pandas as pd
+import unidecode
+import branca.colormap as cm
+colormap =cm.linear.YlOrRd_09.scale(0, 500)
 
-import france_data
-
-
-
-legend_html_template = '''
+     
+legend_html = '''
 <div style="position: fixed;
      padding: .5em; top: 10px; left: 60px; width: 30em; height: 5.5em;
      border:2px solid grey; z-index:9999; font-size:14px; background: #eee;
-     ">&nbsp; Donnees OpenCOVID19 du {date_first} au {date_last}<br>
-     &nbsp; Cas confirmes de COVID-19 par region &nbsp; <i class="fa fa-circle" style="color:orange"></i><br>
-     &nbsp; Cas confirmes de COVID-19 par departement &nbsp; <i class="fa fa-circle" style="color:red"></i>
+     "> &nbsp; Nombre de cas de COVID-19 par departement pour la France metropolitaine<br>
+     &nbsp; Donnees tirees de https://github.com/opencovid19-fr/data  <br>
+     &nbsp; Carte interactive creee par: &nbsp;</i><br>
+     &nbsp; - Sheldon Warden: sheldon.warden@protonmail.com &nbsp;</i><br>
+     &nbsp; - Pierre Thierry: pierre@nothos.net &nbsp; </i>
 </div>
 '''
 
@@ -40,28 +43,8 @@ legend_html_template = '''
 class CovidData(object):
 
     def __init__(self):
-         FR=france_data.FranceData()
-         FR.load_latest_consolidated()
-         self.dates=FR.load_latest_consolidated()
-#        url = "https://raw.githubusercontent.com/opencovid19-fr/data/master/agences-regionales-sante/grand-est/2020-03-16.yaml"#open url
-#        testyaml=yaml.safe_load(urllib.request.urlopen(url).read())
-#        self.dates = {
-#                      "REG-44": testyaml,
-#                      }
-         self.Coordinates = {
-                  'REG-52': [47.4667, -0.7833],
-                  'REG-27': [47.24, 4.818],
-                  'REG-32': [49.9667, 2.7833],      
-                  'REG-84': [45.5167, 4.5333],
-                  'REG-76': [43.7073, 2.1385],
-                  'REG-53': [48.2, -2.85],
-                  'REG-24': [47.5, 1.6833],
-                  'REG-94': [42.1667, 9.1667],
-                  'REG-44': [48.6833, 5.6167],
-                  'REG-11': [48.7, 2.5],
-                  'REG-28': [49.1333, 0.1],
-                  'REG-75': [45.2, 0.1833],
-                  'REG-93': [43.9333, 6.0333],                
+         self.Confirmed_Cases = pd.read_csv('https://raw.githubusercontent.com/opencovid19-fr/data/master/dist/chiffres-cles.csv')
+         self.Departements = {                
                   'DEP-29': [48.26111111, -4.058888889], 
                   'DEP-22': [48.44111111, -2.864166667], 
                   'DEP-56': [47.84638889, -2.81], 
@@ -140,7 +123,7 @@ class CovidData(object):
                   'DEP-46': [44.62416667, 1.604722222],
                   'DEP-48': [44.51722222, 3.500277778],
                   'DEP-50': [49.07944444, -1.3275],
-                  'DEP-53': [49.07944444, -1.3275],
+                  'DEP-53': [48.1333, -0.6833],
                   'DEP-58': [47.11527778, 3.504722222],
                   'DEP-60': [49.41027778, 2.425277778],
                   'DEP-63': [45.72583333, 3.140833333],
@@ -156,75 +139,109 @@ class CovidData(object):
                   'DEP-89': [47.83972222, 3.564444444],
                   'DEP-90': [47.63166667, 6.928611111],
                   'DEP-95': [49.08277778, 2.131111111],
-                  'DEP-2A': [42.39416667, 9.206388889],
-                  'DEP-2B': [41.86361111, 8.988055556]
+                  'DEP-2B': [42.39416667, 9.206388889],
+                  'DEP-2A': [41.86361111, 8.988055556]
+                  } 
+         
+         self.Regions={'REG-52': [47.4667, -0.7833],
+                  'REG-27': [47.24, 4.818],
+                  'REG-32': [49.9667, 2.7833],      
+                  'REG-84': [45.5167, 4.5333],
+                  'REG-76': [43.7073, 2.1385],
+                  'REG-53': [48.2, -2.85],
+                  'REG-24': [47.5, 1.6833],
+                  'REG-94': [42.1667, 9.1667],
+                  'REG-44': [48.6833, 5.6167],
+                  'REG-11': [48.7, 2.5],
+                  'REG-28': [49.1333, 0.1],
+                  'REG-75': [45.2, 0.1833],
+                  'REG-93': [43.9333, 6.0333]
                   }
-        
-
-        
+         
+         self.Coordinates=pd.DataFrame.from_dict(self.Departements, orient='index')
+         self.Coordinates['maille_code']=self.Coordinates.index
+         
          self.map = folium.Map(location=[46,2],
               tiles = 'Stamen Terrain',
               zoom_start=6)
+         
+         self.merged_data_last = None
+         self.merged_data_penultimate = None
 
-    def plot_by_regions(self, regions):
-         for region in regions:
-              if regions[region].get('donneesRegionales') != None:
-                   if regions[region]['donneesRegionales'].get('casConfirmes') !=None:
-                        ra=regions[region]['donneesRegionales']['casConfirmes']
-                        nom=regions[region]['donneesRegionales']['nom']
-                        custom_color='orange'
-                        date=regions[region]['date']
-                        if type(regions[region]['date']) is datetime.date:
-                             date=regions[region]['date'].strftime("%Y-%m-%d")
-                        folium.Circle(
-                                  location=self.Coordinates[regions[region]['donneesRegionales']['code']],
-                                  radius=5000*np.log(ra),
-                                  fill=True,
-                                  color=custom_color,
-                                  fill_color=custom_color,
-                                  fill_opacity=0.5
-                             ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)      
-              if regions[region].get('donneesDepartementales') != None:
-                   for i, departement in enumerate(regions[region]['donneesDepartementales']):
-                        if regions[region]['donneesDepartementales'][i].get('code') != None:
-                             if self.Coordinates.get(regions[region]['donneesDepartementales'][i]['code']) != None:
-                                      if regions[region]['donneesDepartementales'][i].get('casConfirmes') != None:
-                                           ra=regions[region]['donneesDepartementales'][i]['casConfirmes']
-                                           nom=regions[region]['donneesDepartementales'][i]['nom']
-                                           custom_color='red'
-                                           date=regions[region]['date']
-                                           if type(regions[region]['date']) is datetime.date:
-                                                date=regions[region]['date'].strftime("%Y-%m-%d")
-                                           folium.Circle(
-                                                 location=self.Coordinates[regions[region]['donneesDepartementales'][i]['code']],
-                                                 radius=5000*np.log(ra),
-                                                 fill=True,
-                                                 color=custom_color,
-                                                 fill_color=custom_color,
-                                                 fill_opacity=0.5
-                                                 ).add_child(folium.Popup(str(nom).replace('è','e').replace('é','e')+'- nombre de cas au '+str(date)+': ' +str(ra))).add_to(self.map)           
+    def merge_data_and_coordinates(self):
+         self.merged_data=self.Confirmed_Cases.merge(self.Coordinates, left_on='maille_code', right_on='maille_code')
 
+        
+    def drop_rows_for_which_confirmed_cases_are_missing(self):
+         self.merged_data=self.merged_data.dropna(subset=['cas_confirmes'])
 
-    def plot_number_of_cases(self):
-         for recovered_date in self.dates:
-              self.plot_by_regions(self.dates[recovered_date])
-         all_dates = list(self.dates.keys())
-         all_dates.sort()
-         self.map.get_root().html.add_child(folium.Element(legend_html_template.format(date_first=all_dates[0], date_last=all_dates[-1])))
+    def select_last_date(self):
+         self.merged_data_last=self.merged_data.sort_values('date').groupby('maille_code').tail(1)
 
+    def select_penultimate_date(self):
+         merged_data_penultimate_temp=self.merged_data.sort_values('date').groupby('maille_code').tail(2)
+         self.merged_data_penultimate=merged_data_penultimate_temp.sort_values('date').groupby('maille_code').head(1)
 
-                             
-                        
+    def compute_change_in_cases(self):
+          self.merged_data_diff=self.merged_data_last.merge(self.merged_data_penultimate, left_on='maille_code', right_on='maille_code')
+          self.merged_data_diff['difference']=self.merged_data_diff['cas_confirmes_x']-self.merged_data_diff['cas_confirmes_y']
+          self.merged_data_diff.to_csv('difftest.csv')
 
+    def plot_departements(self,data,custom_color):
+         radius = data['cas_confirmes_x'].values.astype('float')
+         latitude = data['0_x'].values.astype('float')
+         longitude = data['1_y'].values.astype('float')
+         nom = data['maille_nom_x'].values.astype('str')   
+         latest_date = data['date_x'].values.astype('str')
+         penultimate_date = data['date_y'].values.astype('str')         
+         difference = data['difference'].values.astype('str')
+         for la,lo,ra,no,di,ld,pd in zip(latitude,longitude,radius,nom,difference,latest_date,penultimate_date):
+              label=unidecode.unidecode(no.replace("'","-"))+': '+str(ra)[:-2]+ ' cas confirmes au '+str(ld)+'. +'+str(di)[:-2]+' cas depuis le '+str(pd)+'.'
+              if ra<50:
+                   folium.Circle(
+                       location=[la,lo],
+                       radius=17000,
+                       fill=True,
+                       opacity = 0.5,
+                       color='white',
+                       fill_color='white',
+                       fill_opacity=0.5
+                   ).add_child(folium.Popup(label)).add_to(self.map)
+              elif ra<500:
+                   folium.Circle(
+                       location=[la,lo],
+                       radius=5000*np.log(ra),
+                       fill=True,
+                       color='orange',
+                       fill_color=colormap(ra),
+                       fill_opacity=0.8
+                   ).add_child(folium.Popup(label)).add_to(self.map)
+              else:
+                  folium.Circle(
+                       location=[la,lo],
+                       radius=31073,
+                       fill=True,
+                       color='red',
+                       fill_color='red',
+                       fill_opacity=1
+                   ).add_child(folium.Popup(label)).add_to(self.map)
 
-                
-
-
-
+               
+             
             
 CODA=CovidData()
-CODA.plot_number_of_cases()
-#CODA.map.save("./mytestREGION.html")
+CODA.merge_data_and_coordinates()
+CODA.drop_rows_for_which_confirmed_cases_are_missing()
+CODA.select_penultimate_date()
+CODA.select_last_date()
+CODA.compute_change_in_cases()
+CODA.plot_departements(CODA.merged_data_diff,'grey')
+
+CODA.map.get_root().html.add_child(folium.Element(legend_html))
+colormap.caption = 'Nombre de cas de COVID-19 par departement (Source: opencovid19-fr)'
+CODA.map.add_child(colormap)
+
+#CODA.map.save("./test_map.html")
 
 page_template = '''<!doctype html>
 
@@ -245,6 +262,7 @@ app = Flask(__name__)
 @app.route("/")
 def display_map():
      return page_template.format(map=CODA.map._repr_html_())
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=os.environ.get('PORT', 80))
